@@ -1,0 +1,35 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "Employee recognition system to award good behavior by employees.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "author": "Team Octans",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mmcewan/octans-employee-recognition"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.17.2",
+    "chart.js": "^2.6.0",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.0.1",
+    "express": "^4.15.3",
+    "express-handlebars": "^3.0.0",
+    "express-session": "^1.15.3",
+    "handlebars": "^4.0.10",
+    "morgan": "^1.0.1",
+    "mysql": "^2.13.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "requestify": "^0.2.5"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
