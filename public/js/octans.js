@@ -1,13 +1,13 @@
 $( document ).ready(function() {
 
-  $('#signup-button').click(function() {
+  $('.signup-button').click(function() {
     event.preventDefault();
     $.get("/signup", function(data) {
       $("#content").html(data);
     });
   });
 
-  $('#login-button').click(function() {
+  $('.login-button').click(function() {
     event.preventDefault();
     $.get("/login", function(data) {
       $("#content").html(data);
