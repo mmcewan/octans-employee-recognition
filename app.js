@@ -20,15 +20,15 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 // for logging to console
-var morgan = require('morgan');
-app.use(morgan('dev'));
+var logger = require('morgan');
+app.use(logger('dev'));
 
-// for bcryptjs
+// for bcryptjs password encryption
 var bcrypt = require('bcryptjs');
 // Create a password salt
 var salt = bcrypt.genSaltSync(10);
 
-// set up authentication using passport js
+// set up authentication using passport
 var passport = require('passport');
 var session = require('express-session');
 var flash = require('connect-flash');
@@ -37,7 +37,12 @@ var cookieParser = require('cookie-parser');
 require('./config/passport')(passport);
 
 //required for passport
-app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
+app.use(session({
+  secret: 'keyboard dog',
+  resave: true,
+  saveUninitialized: true,
+  cookie: { maxAge : 60000 }
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
@@ -52,15 +57,27 @@ app.get('/', function (req, res) {
 });
 
 app.get('/login', function(req, res) {
-  res.render('login.handlebars');
+  res.render('login.handlebars', { message: req.flash('message') });
 });
 
+// app.post('/login',
+//   passport.authenticate('local-login', {
+//     successRedirect: '/account',
+//     failureRedirect: '/login',
+//     failureFlash: true
+// }));
+
 app.post('/login',
-  passport.authenticate('local-login', {
-    successRedirect: '/account',
-    failureRedirect: '/',
-    failureFlash: true
-}));
+  passport.authenticate('local-login', {failureRedirect : '/login', failureFlash : true }),
+  function(req, res) {
+    var user = JSON.parse(req.user);
+    if (user.admin_flag == 'Y') {
+      res.redirect('/admin');
+    }
+    else {
+      res.redirect('/account');
+    }
+});
 
 app.get('/signup', function(req, res) {
   res.render('signup.handlebars');
@@ -69,6 +86,7 @@ app.get('/signup', function(req, res) {
 app.post('/signup', function (req, res) {
   var salt = bcrypt.genSaltSync(10);
   var hash = bcrypt.hashSync(req.body.password, salt);
+  var admin_flag = "Y";
 
   var query = "insert into user_profile " +
     "(username, password, firstname, lastname, signature, admin_flag, created_ts)" +
@@ -80,7 +98,7 @@ app.post('/signup', function (req, res) {
     req.body.firstname,
     req.body.lastname,
     req.body.signature,
-    "N"
+    admin_flag
   ], function(err, dbres) {
     if (err) {
       if (err.code == '23505') {
@@ -109,7 +127,7 @@ app.get('/logout', function (req, res) {
   res.redirect('/');
 });
 
-// reoute middleware to make sure a user is logged in
+// route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
   // if user is authenticated, continue
   if (req.isAuthenticated()) {

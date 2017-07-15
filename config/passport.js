@@ -1,5 +1,4 @@
 // config/passport.js
-
 var LocalStrategy = require('passport-local').Strategy;
 var bcrypt = require('bcryptjs');
 
@@ -17,7 +16,8 @@ module.exports = function(passport) {
 
   // used to serialize the user for the session
   passport.serializeUser(function(user, done) {
-    done(null, user);
+    var userObj = JSON.parse(user);
+    done(null, userObj.username);
   });
 
   // user to deserialize the user
@@ -29,20 +29,25 @@ module.exports = function(passport) {
   });
 
   passport.use('local-login', new LocalStrategy({
+    passReqToCallback : true
   },
-    function(username, password, done) {
-      var query = "select username, password from user_profile where username = ?;";
+    function(req, username, password, done) {
+      var query = "select username, password, admin_flag from user_profile where username = ?;";
       pool.query(query, [username], function (err, dbres) {
         if (err) {
           return done(err);
         }
         if (dbres.length == 0) {
-          return done(null, false, req.flash('loginMessage:', 'No user found.'));
+          return done(null, false, req.flash('message', 'No user found.'));
         }
         if (!bcrypt.compareSync(password, dbres[0].password)) {
-          return done(null, false, req.flash('loginMessage:', 'Oops! Wrong password.'));
+          return done(null, false, req.flash('message', 'Oops, wrong password!'));
         }
-        return done(null, dbres[0].username);
+        var userData = new Object();
+        userData.username = dbres[0].username;
+        userData.admin_flag = dbres[0].admin_flag;
+        var user = JSON.stringify(userData)
+        return done(null, user);
       });
     }));
 };
