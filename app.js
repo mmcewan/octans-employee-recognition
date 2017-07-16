@@ -60,13 +60,6 @@ app.get('/login', function(req, res) {
   res.render('login.handlebars', { message: req.flash('message') });
 });
 
-// app.post('/login',
-//   passport.authenticate('local-login', {
-//     successRedirect: '/account',
-//     failureRedirect: '/login',
-//     failureFlash: true
-// }));
-
 app.post('/login',
   passport.authenticate('local-login', {failureRedirect : '/login', failureFlash : true }),
   function(req, res) {
@@ -103,17 +96,17 @@ app.post('/signup', function (req, res) {
     if (err) {
       if (err.code == '23505') {
         res.status(409);
-        res.send("Username already in use");
+        res.send("Username already in use.");
         console.log(err);
       }
       else {
         res.status(500);
-        res.send("Error!");
+        res.send("Error! Something broke...");
         console.log(err);
       }
     } else {
-        res.status(200);
-        res.send("Success!");
+        req.flash('message', 'Account created successfully. Log in now!');
+        res.render('login.handlebars', { message: req.flash('message') });
       }
     });
 });
