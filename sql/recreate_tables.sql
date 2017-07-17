@@ -14,17 +14,6 @@ CREATE TABLE user_profile (
     PRIMARY KEY (id)
 ) ENGINE = 'InnoDB';
 
--- Create Admin user data table
-DROP TABLE IF EXISTS `admin_profile`;
-CREATE TABLE admin_profile (
-	id INT NOT NULL AUTO_INCREMENT,
-	username VARCHAR(255) NOT NULL,
-	password VARCHAR(255) NOT NULL,
-	admin_flag VARCHAR(1) NOT NULL,
-	created_ts TIMESTAMP NOT NULL,
-	PRIMARY KEY (id)
-) ENGINE = 'InnoDB';
-
 -- Create Award Type data table
 DROP TABLE IF EXISTS `award_type`;
 CREATE TABLE award_type (
@@ -53,11 +42,7 @@ SET FOREIGN_KEY_CHECKS=1;
 -- Insert statements for user table
 INSERT INTO user_profile (username, password, firstname, lastname, signature, admin_flag, created_ts) VALUES
 ('testerjoe', 'abc123', 'Joe', 'Tester', NULL, 'N', CURRENT_TIMESTAMP),
-('admin', 'admin', NULL, NULL, NULL, 'N', CURRENT_TIMESTAMP);
-
--- Insert statements for admin table
-INSERT INTO admin_profile (username, password, admin_flag, created_ts) VALUES
-('octansosu@gmail.com', 'coffee123', 'Y', CURRENT_TIMESTAMP);
+('octansosu@gmail.com', 'coffee123', NULL, NULL, NULL, 'Y', CURRENT_TIMESTAMP);
 
 -- Insert statements for award_type table
 INSERT INTO award_type (description) VALUES
