@@ -52,6 +52,10 @@ app.use(flash());
 // allow express to use static files in public directory
 app.use(express.static('public'));
 
+// ------Temporary Route for Admin page: No Login Needed------------
+var admin = require('./admin');
+app.use('/', admin);
+
 // routes
 app.get('/', function (req, res) {
   res.render('home.handlebars');
