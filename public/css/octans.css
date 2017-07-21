@@ -1,0 +1,10 @@
+.signature {
+  background-color: white;
+}
+
+.signature-footer {
+  position: relative;
+  left: 10px;
+  bottom: 45px;
+  height: 100px;
+}
