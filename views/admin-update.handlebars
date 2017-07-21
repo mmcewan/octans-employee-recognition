@@ -1,0 +1,34 @@
+<section class="wrapper">
+	<div class="inner">
+		<h2 class="major">Update User Info</h2>
+
+		<form method="post">
+			<br/>
+			<input type="hidden" name="id" value={{id}}>
+			
+			<div class="field">
+				<label for="username">Username</label>
+				<input type="text" name="username" value="{{username}}">
+			</div>
+			
+			<div class="field">
+				<label for="firstname">First Name</label>
+				<input type="text" name="firstname" value="{{firstname}}">
+			</div>
+			
+			<div class="field">
+				<label for="lastname">Last Name</label>
+				<input type="text" name="lastname" value="{{lastname}}">
+			</div>
+			
+			<div class="field">
+				<label for="admin_flag">Admin (Y/N)</label>
+				<input type="text" name="admin_flag" value="{{admin_flag}}">
+			</div>
+			
+			<div class="actions">
+				<input type="submit" name="update">
+			</div>
+		</form>
+	</div>
+</section>
