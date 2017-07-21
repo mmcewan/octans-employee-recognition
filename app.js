@@ -2,8 +2,6 @@
 var express = require('express');
 var app = express();
 
-var port = 8080;
-
 // set up mysql database connection
 var mysql = require('mysql');
 var dbconfig = require('./config/database.json');
@@ -149,6 +147,7 @@ function isLoggedIn(req, res, next) {
 }
 
 // launch server, listen for incoming connections
+var port = process.env.PORT || 3000;
 app.listen(port, function(err) {
   console.log('server running on port ' + port);
 });
