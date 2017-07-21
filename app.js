@@ -34,6 +34,9 @@ var session = require('express-session');
 var flash = require('connect-flash');
 var cookieParser = require('cookie-parser');
 
+// for working with file/directory paths to store user signature
+var path = require('path');
+
 require('./config/passport')(passport);
 
 //required for passport
@@ -77,21 +80,36 @@ app.get('/signup', function(req, res) {
 });
 
 app.post('/signup', function (req, res) {
-  var salt = bcrypt.genSaltSync(10);
-  var hash = bcrypt.hashSync(req.body.password, salt);
-  var admin_flag = "Y";
 
+  // generate random salt
+  var salt = bcrypt.genSaltSync(10);
+  // hash password
+  var hash = bcrypt.hashSync(req.body.password, salt);
+  // set admin flag to "N" (not admin) by default
+  var adminFlag = "N";
+
+  // store path to user signature image ("user_data/username.png")
+  var sigPath = 'user_data/' + req.body.username + '.png'
+  path.join(__dirname, 'sigPath');
+  // get signature data from form, prep for decoding
+  var base64data = req.body.sigData.split(',')[1];
+  // decode signature data and save image to specified path
+  var base64 = require('base64-min');
+  base64.decodeToFile(base64data, sigPath) ;
+
+  // build SQL to insert new user entry into user_profile table
   var query = "insert into user_profile " +
     "(username, password, firstname, lastname, signature, admin_flag, created_ts)" +
     " values ( ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP );";
 
+  // execute SQL to insert new user entry into user_profile table
   pool.query(query, [
     req.body.username,
     hash,
     req.body.firstname,
     req.body.lastname,
-    req.body.signature,
-    admin_flag
+    sigPath,
+    adminFlag
   ], function(err, dbres) {
     if (err) {
       if (err.code == '23505') {
@@ -101,7 +119,7 @@ app.post('/signup', function (req, res) {
       }
       else {
         res.status(500);
-        res.send("Error! Something broke...");
+        res.send("Error! Something isn't right. Confirm the database is up.");
         console.log(err);
       }
     } else {

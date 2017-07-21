@@ -26,8 +26,16 @@
             <label for="lastname">Last Name</label>
             <input type="text" name="lastname" id="lastname" />
           </div>
+          <div class="field">
+            <label for="signature">Signature</label>
+            <div id=signature-wrapper>
+              <canvas id="signature" name="signature" class="signature" width=700 height=100></canvas>
+              <button type="button" class="button small signature-footer" id="clearButton">Clear</button>
+            </div>
+            <input type="hidden" name="sigData" id="sigData"/>
+          </div>
           <ul class="actions">
-            <li><input type="submit" value="Complete Registration" /></li>
+            <li><input type="submit" id="complete-registration" value="Complete Registration" /></li>
             <li><a href="/login" class="button special login-button">Already have an account?</a></li>
           </ul>
         </form>
