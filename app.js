@@ -1,6 +1,7 @@
 // app.js
 var express = require('express');
 var app = express();
+ 
 
 //packages related to pdf generation and mailing
 var nodemailer = require('nodemailer');
@@ -202,27 +203,24 @@ var adate = req.body.adate;
 var aemail = req.body.aemail;
 var atype = req.body.atype;
 
-console.log(areceiver);
-console.log(agiver);
-console.log(atitle);
-console.log(amessage);
-console.log(adate);
-console.log(aemail);
-console.log(atype);
 var backgroundfile = path.join(__dirname, 'cert_resources', 'background1.jpg');
 var logofile = path.join(__dirname, 'cert_resources', 'logo.png');
-console.log(logofile);
-console.log(backgroundfile);
+
 var latexStrings = ["\\documentclass[tikz]{article}", "\\usepackage{color}", "\\usepackage{tikz}", "\\usepackage[landscape,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}", "\\usepackage[T1]{fontenc}", "\\usepackage{setspace}", "\\usepackage{graphicx}", "\\usepackage{eso-pic}", "\\newcommand \\BackgroundPic{\\put(0,0){\\parbox[b][\\paperheight]{\\paperwidth}{\\vfill \\centering \\includegraphics[height = \\paperheight, width = \\paperwidth]{" + backgroundfile +"} \\vfill}}}",  "\\begin{document}", "\\AddToShipoutPicture{\\BackgroundPic}", "\\pagenumbering{gobble}", "\\noindent", "\\makebox[\\textwidth][c]", "{\\begin{minipage}[c]{1.5\\textwidth}", "\\centering \\Huge \\color{red} Octans Group Company\\vskip0.8em \\large Corvallis, OR\\vskip0.8em \\large \\color{black} Employee Recognition Award: \\vskip3.8em \\Huge \\color{red}" + atitle + " \\vskip0.8em \\large \\color{black}Award date: \\color{red}" + adate + "\\vskip0.8em  \\large \\color{black}Awarded to: \\color{red}" + areceiver + "\\vskip0.8em  \\large \\color{black} Recognized by: \\color{red}" + agiver + "\\vskip0.8em  \\large \\color{black}" + amessage + "\\par \\end{minipage}}", "\\begin{tikzpicture}[remember picture,overlay]\\node[anchor=north east,inner sep=0pt] at ($(current page.north east) + (-4in,-2in)$){\\includegraphics[width=4cm, height=4cm]{" + logofile + "}} \\end{tikzpicture}", "\\end{document}" ];
 
-var outputfile = fs.createWriteStream('./pdf_temp/output.pdf');
-latex(latexStrings).pipe(outputfile);
-outputfile.end();
+var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf'); 
+var outputfile = fs.createWriteStream(outputfilepath);
+var latexstream = latex(latexStrings).pipe(outputfile);
+latexstream.on('finish', function(){
 
-fs.readFile("./pdf_temp/output.pdf", function (err,data){
-     res.contentType("application/pdf");
-     res.send(data);
-  });
+var file = fs.createReadStream(outputfilepath);
+var stat = fs.statSync(outputfilepath);
+res.setHeader('Content-Length', stat.size);
+res.setHeader('Content-Type', 'application/pdf');
+res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
+file.pipe(res);
+});
+
   /*var queryString = "select user_id, password_hash, password_salt from users " +
                     " where username = ?";
   pool.query(queryString, [req.body.username], function(err, dbres) {
@@ -270,7 +268,7 @@ fs.readFile("./pdf_temp/output.pdf", function (err,data){
   smtpTransport.sendMail(message);
 */
 
- // res.status(200);
- //    res.send("SUCCESS");
+  //res.status(200);
+    // res.send("SUCCESS");
 });
 
