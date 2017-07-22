@@ -1,7 +1,7 @@
 // app.js
 var express = require('express');
 var app = express();
- 
+
 
 //packages related to pdf generation and mailing
 var nodemailer = require('nodemailer');
@@ -101,16 +101,11 @@ app.post('/signup', function (req, res) {
   // store path to user signature image ("user_data/username.png")
   var sigPath = 'user_data/' + req.body.username + '.png'
   path.join(__dirname, 'sigPath');
-  // get signature data from form, prep for decoding
-  var base64data = req.body.sigData.split(',')[1];
-  // decode signature data and save image to specified path
-  var base64 = require('base64-min');
-  base64.decodeToFile(base64data, sigPath) ;
 
   // build SQL to insert new user entry into user_profile table
   var query = "insert into user_profile " +
-    "(username, password, firstname, lastname, signature, admin_flag, created_ts)" +
-    " values ( ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP );";
+    "(username, password, firstname, lastname, email_address, signature, admin_flag, created_ts)" +
+    " values ( ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP );";
 
   // execute SQL to insert new user entry into user_profile table
   pool.query(query, [
@@ -118,6 +113,7 @@ app.post('/signup', function (req, res) {
     hash,
     req.body.firstname,
     req.body.lastname,
+    req.body.email,
     sigPath,
     adminFlag
   ], function(err, dbres) {
@@ -133,6 +129,11 @@ app.post('/signup', function (req, res) {
         console.log(err);
       }
     } else {
+        // get signature data from form, prep for decoding
+        var base64data = req.body.sigData.split(',')[1];
+        // decode signature data and save image to specified path
+        var base64 = require('base64-min');
+        base64.decodeToFile(base64data, sigPath);
         req.flash('message', 'Account created successfully. Log in now!');
         res.render('login.handlebars', { message: req.flash('message') });
       }
@@ -194,7 +195,7 @@ pool.query("select id, description from award_type;", function (err, dbres){
   route to create new award PDF from provided details (agiver, areceiver, atitle, amessage, date).
 */
 app.post('/new_award', function(req, res, next) {
-  
+
 var areceiver = req.body.areceiver;
 var agiver = req.body.agiver;
 var atitle = req.body.atitle;
@@ -208,7 +209,7 @@ var logofile = path.join(__dirname, 'cert_resources', 'logo.png');
 
 var latexStrings = ["\\documentclass[tikz]{article}", "\\usepackage{color}", "\\usepackage{tikz}", "\\usepackage[landscape,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}", "\\usepackage[T1]{fontenc}", "\\usepackage{setspace}", "\\usepackage{graphicx}", "\\usepackage{eso-pic}", "\\newcommand \\BackgroundPic{\\put(0,0){\\parbox[b][\\paperheight]{\\paperwidth}{\\vfill \\centering \\includegraphics[height = \\paperheight, width = \\paperwidth]{" + backgroundfile +"} \\vfill}}}",  "\\begin{document}", "\\AddToShipoutPicture{\\BackgroundPic}", "\\pagenumbering{gobble}", "\\noindent", "\\makebox[\\textwidth][c]", "{\\begin{minipage}[c]{1.5\\textwidth}", "\\centering \\Huge \\color{red} Octans Group Company\\vskip0.8em \\large Corvallis, OR\\vskip0.8em \\large \\color{black} Employee Recognition Award: \\vskip3.8em \\Huge \\color{red}" + atitle + " \\vskip0.8em \\large \\color{black}Award date: \\color{red}" + adate + "\\vskip0.8em  \\large \\color{black}Awarded to: \\color{red}" + areceiver + "\\vskip0.8em  \\large \\color{black} Recognized by: \\color{red}" + agiver + "\\vskip0.8em  \\large \\color{black}" + amessage + "\\par \\end{minipage}}", "\\begin{tikzpicture}[remember picture,overlay]\\node[anchor=north east,inner sep=0pt] at ($(current page.north east) + (-4in,-2in)$){\\includegraphics[width=4cm, height=4cm]{" + logofile + "}} \\end{tikzpicture}", "\\end{document}" ];
 
-var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf'); 
+var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
 var outputfile = fs.createWriteStream(outputfilepath);
 var latexstream = latex(latexStrings).pipe(outputfile);
 latexstream.on('finish', function(){
@@ -251,24 +252,23 @@ file.pipe(res);
             filename: 'output.pdf',
             path: './pdf_temp/output.pdf'
         }]};
-        
+
   var smtpTransport = nodemailer.createTransport(
         {
         service: "gmail",
         auth: {
           type: "OAuth2",
             user         : "octansosu",
-            clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com", 
-            clientSecret: "efk5-I22oRg3MWN0e95ZrL90", 
+            clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
+            clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
             refreshToken : "1/3_8LW7zocr5EMYemekC68W-IFBO2W26enLJgLySmoH4",
             accessToken  : "ya29.GluGBF45d5ws0x1Y0oG_0fwstBuJOvqnwbKJoAmAQiidFuD-IcVQ9jR1bChPLMh37ZLS6x7MHqos000pgmhCVUKYVHSJlChXKkZeN_TpVluShSS_145vt7bO7bZS"
         }
       });
-  
+
   smtpTransport.sendMail(message);
 */
 
   //res.status(200);
     // res.send("SUCCESS");
 });
-
