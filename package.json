@@ -28,9 +28,15 @@
     "mysql": "^2.13.0",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
-    "requestify": "^0.2.5"
+    "requestify": "^0.2.5",
+    "fs": "0.0.1-security",
+    "latex": "0.0.1",
+    "nodemailer": "^4.0.1",
+    "pdfkit": "^0.8.3",
+    "xoauth2": "^1.2.0"
   },
   "devDependencies": {
+    "@types/js-base64": "^2.1.5",
     "nodemon": "^1.11.0"
   }
 }

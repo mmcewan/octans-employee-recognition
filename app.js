@@ -2,6 +2,13 @@
 var express = require('express');
 var app = express();
 
+//packages related to pdf generation and mailing
+var nodemailer = require('nodemailer');
+var xoauth2 = require('xoauth2');
+//const path = require('path');
+var fs = require('fs');
+var latex = require('latex');
+
 // set up mysql database connection
 var mysql = require('mysql');
 var dbconfig = require('./config/database.json');
@@ -155,3 +162,115 @@ var port = process.env.PORT || 3000;
 app.listen(port, function(err) {
   console.log('server running on port ' + port);
 });
+
+/*
+ route to render page with new award form
+*/
+app.get('/makeaward', function(req, res, next){
+res.render('createaward.handlebars');
+});
+
+
+/*
+  route to return list of award types
+*/
+app.get('/awards/list', function(req, res, next){
+pool.query("select id, description from award_type;", function (err, dbres){
+    if (err) {
+      res.status(500);
+      res.send("DB ERROR");
+      console.log(err);
+    } else {
+      res.setHeader("Content-Type", "Application/JSON");
+      res.status(200);
+      res.send(dbres);
+    }
+  });
+});
+
+
+/*
+  route to create new award PDF from provided details (agiver, areceiver, atitle, amessage, date).
+*/
+app.post('/new_award', function(req, res, next) {
+  
+var areceiver = req.body.areceiver;
+var agiver = req.body.agiver;
+var atitle = req.body.atitle;
+var amessage = req.body.amessage;
+var adate = req.body.adate;
+var aemail = req.body.aemail;
+var atype = req.body.atype;
+
+console.log(areceiver);
+console.log(agiver);
+console.log(atitle);
+console.log(amessage);
+console.log(adate);
+console.log(aemail);
+console.log(atype);
+var backgroundfile = path.join(__dirname, 'cert_resources', 'background1.jpg');
+var logofile = path.join(__dirname, 'cert_resources', 'logo.png');
+console.log(logofile);
+console.log(backgroundfile);
+var latexStrings = ["\\documentclass[tikz]{article}", "\\usepackage{color}", "\\usepackage{tikz}", "\\usepackage[landscape,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}", "\\usepackage[T1]{fontenc}", "\\usepackage{setspace}", "\\usepackage{graphicx}", "\\usepackage{eso-pic}", "\\newcommand \\BackgroundPic{\\put(0,0){\\parbox[b][\\paperheight]{\\paperwidth}{\\vfill \\centering \\includegraphics[height = \\paperheight, width = \\paperwidth]{" + backgroundfile +"} \\vfill}}}",  "\\begin{document}", "\\AddToShipoutPicture{\\BackgroundPic}", "\\pagenumbering{gobble}", "\\noindent", "\\makebox[\\textwidth][c]", "{\\begin{minipage}[c]{1.5\\textwidth}", "\\centering \\Huge \\color{red} Octans Group Company\\vskip0.8em \\large Corvallis, OR\\vskip0.8em \\large \\color{black} Employee Recognition Award: \\vskip3.8em \\Huge \\color{red}" + atitle + " \\vskip0.8em \\large \\color{black}Award date: \\color{red}" + adate + "\\vskip0.8em  \\large \\color{black}Awarded to: \\color{red}" + areceiver + "\\vskip0.8em  \\large \\color{black} Recognized by: \\color{red}" + agiver + "\\vskip0.8em  \\large \\color{black}" + amessage + "\\par \\end{minipage}}", "\\begin{tikzpicture}[remember picture,overlay]\\node[anchor=north east,inner sep=0pt] at ($(current page.north east) + (-4in,-2in)$){\\includegraphics[width=4cm, height=4cm]{" + logofile + "}} \\end{tikzpicture}", "\\end{document}" ];
+
+var outputfile = fs.createWriteStream('./pdf_temp/output.pdf');
+latex(latexStrings).pipe(outputfile);
+outputfile.end();
+
+fs.readFile("./pdf_temp/output.pdf", function (err,data){
+     res.contentType("application/pdf");
+     res.send(data);
+  });
+  /*var queryString = "select user_id, password_hash, password_salt from users " +
+                    " where username = ?";
+  pool.query(queryString, [req.body.username], function(err, dbres) {
+    if (err)  {
+      res.status(500);
+      res.send("SERVER ERROR");
+      console.log(err);
+    } else if (dbres.length != 1) {
+      res.status(402);
+      res.send("USER NOT FOUND");
+    } else if (util.validatePass(req.body.password, dbres[0].password_salt, dbres[0].password_hash)) {
+      req.session.userID = dbres[0].user_id;
+      res.status(200);
+      res.send("SUCCESS");
+    } else {
+      res.status(401);
+      res.send("INVALID PASSWORD");
+    }
+  });*/
+  /*
+  var message = {
+    from: 'octansosu@gmail.com',
+    to: aemail,
+    subject: "Contratulation, you have received an award!",
+    text: amessage,
+    attachments: [
+        {
+            filename: 'output.pdf',
+            path: './pdf_temp/output.pdf'
+        }]};
+        
+  var smtpTransport = nodemailer.createTransport(
+        {
+        service: "gmail",
+        auth: {
+          type: "OAuth2",
+            user         : "octansosu",
+            clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com", 
+            clientSecret: "efk5-I22oRg3MWN0e95ZrL90", 
+            refreshToken : "1/3_8LW7zocr5EMYemekC68W-IFBO2W26enLJgLySmoH4",
+            accessToken  : "ya29.GluGBF45d5ws0x1Y0oG_0fwstBuJOvqnwbKJoAmAQiidFuD-IcVQ9jR1bChPLMh37ZLS6x7MHqos000pgmhCVUKYVHSJlChXKkZeN_TpVluShSS_145vt7bO7bZS"
+        }
+      });
+  
+  smtpTransport.sendMail(message);
+*/
+
+ // res.status(200);
+ //    res.send("SUCCESS");
+});
+

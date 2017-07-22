@@ -3,7 +3,7 @@
     "port"      : 3306,
     "database"  : "awarddb",
     "user"      : "root",
-    "password"  : "root",
+    "password"  : "",
     "connectionLimit": 25,
     "idleTimeoutMillis" : 30000
 }
