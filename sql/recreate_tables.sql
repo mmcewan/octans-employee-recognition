@@ -49,13 +49,13 @@ INSERT INTO user_profile (username, password, firstname, lastname, email_address
 ('octansosu', '$2y$10$GPORmfRXJ3HQmVvdZbxqRu9sDxHY8HU7kFVazIfIG/7fabtadop0W', 'Octans', 'Team', 'octansosu@gmail.com', 'user_data/octansosu.png', 'N', CURRENT_TIMESTAMP);
 -- Test user :: username: testuser1, password: osu1 (hashed)
 INSERT INTO user_profile (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts) VALUES
-('testuser1', '$2y$10$L9KcJAKLUKTB6cZAv1.xo.yYko7qQqOxbSBK8KNr2mUALHx/tvjWu', 'Test', 'User1','testuser1@test.com', 'user_data/testuser1.png', 'N', CURRENT_TIMESTAMP);
+('testuser1', '$2a$10$FMiRrnmuac4jERlsyWd6D.JWzOV7jW3492VYyGv0MTHun/tS6xAH.', 'Test', 'User1','testuser1@test.com', 'user_data/testuser1.png', 'N', CURRENT_TIMESTAMP);
 -- Test user :: username: testuser2, password: osu2 (hashed)
 INSERT INTO user_profile (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts) VALUES
-('testuser2', '$2y$10$tzraFLvpHOgF14.yzadCauYAXHhPp38K4NA6650Qw6inZRrrKN7.O', 'Test', 'User2', 'testuser2@test.com', 'user_data/testuser2.png', 'N', CURRENT_TIMESTAMP);
+('testuser2', '$2a$10$OrhgZM1BUlfF4j5APpNFMej7KepCoCS/MxVjkuhCUJHyrZSp06IyK', 'Test', 'User2', 'testuser2@test.com', 'user_data/testuser2.png', 'N', CURRENT_TIMESTAMP);
 -- Test user :: username: testuser3, password: osu3 (hashed)
 INSERT INTO user_profile (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts) VALUES
-('testuser3', '$2y$10$gF6q32QksjXxhfloTdgQfOsI/RhSBN0uPqQPSg4KplVNyvNYtAvGe', 'Test', 'User3', 'testuser3@test.com', 'user_data/testuser3.png', 'N', CURRENT_TIMESTAMP);
+('testuser3', '$2a$10$u83YaALhGrJvYAhTVs4oMumb872RTbk/BIkhuC6H.P2n30WTmNU92', 'Test', 'User3', 'testuser3@test.com', 'user_data/testuser3.png', 'N', CURRENT_TIMESTAMP);
 
 -- Insert statements for award_type table
 INSERT INTO award_type (description) VALUES
