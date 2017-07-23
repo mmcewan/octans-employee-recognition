@@ -1,8 +1,2 @@
-tikz
-color
-geometry
-fontenc
-setspace
-graphicx
-eso-pic
+pgf
 
