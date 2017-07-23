@@ -3,35 +3,36 @@ SET FOREIGN_KEY_CHECKS=0;
 -- Create User data table
 DROP TABLE IF EXISTS `user_profile`;
 CREATE TABLE user_profile (
-    id INT NOT NULL AUTO_INCREMENT,
-	username VARCHAR(255) NOT NULL,
-	password VARCHAR(255) NOT NULL, 
+  id INT NOT NULL AUTO_INCREMENT,
+	username VARCHAR(255) NOT NULL UNIQUE,
+	password VARCHAR(255) NOT NULL,
 	firstname VARCHAR(40),
-    lastname VARCHAR(40),
+  lastname VARCHAR(40),
+  email_address VARCHAR(255) UNIQUE,
 	signature VARCHAR(255),
 	admin_flag VARCHAR(1) NOT NULL,
 	created_ts TIMESTAMP NOT NULL,
-    PRIMARY KEY (id)
+  PRIMARY KEY (id)
 ) ENGINE = 'InnoDB';
 
 -- Create Award Type data table
 DROP TABLE IF EXISTS `award_type`;
 CREATE TABLE award_type (
-    id INT NOT NULL AUTO_INCREMENT,
-    description VARCHAR(255) NOT NULL,
-    PRIMARY KEY (id)
+  id INT NOT NULL AUTO_INCREMENT,
+  description VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id)
 ) ENGINE = 'InnoDB';
 
 -- Create Award data table
 DROP TABLE IF EXISTS `award`;
 CREATE TABLE award (
-    id INT NOT NULL AUTO_INCREMENT,
+  id INT NOT NULL AUTO_INCREMENT,
 	sender_id INT NOT NULL,
 	recepient_id INT NOT NULL,
 	award_type INT NOT NULL,
 	comment VARCHAR(255) NOT NULL,
 	award_date DATE NOT NULL,
-    PRIMARY KEY (id),
+  PRIMARY KEY (id),
 	FOREIGN KEY (sender_id) REFERENCES user_profile(id) ON UPDATE CASCADE,
 	FOREIGN KEY (recepient_id) REFERENCES user_profile(id) ON UPDATE CASCADE,
 	FOREIGN KEY (award_type) REFERENCES award_type(id) ON UPDATE CASCADE
@@ -40,9 +41,21 @@ CREATE TABLE award (
 SET FOREIGN_KEY_CHECKS=1;
 
 -- Insert statements for user table
-INSERT INTO user_profile (username, password, firstname, lastname, signature, admin_flag, created_ts) VALUES
-('testerjoe', 'abc123', 'Joe', 'Tester', NULL, 'N', CURRENT_TIMESTAMP),
-('octansosu@gmail.com', 'coffee123', NULL, NULL, NULL, 'Y', CURRENT_TIMESTAMP);
+-- Admin role :: username: admin, password: cs467 (hashed)
+INSERT INTO user_profile (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts) VALUES
+('admin', '$2y$10$bYrE1D2ZK8oS3tQFw6W8B.j8NaFYDef63Kv3kqf7maCQXPjQ.T1Lm', NULL, NULL, NULL, NULL, 'Y', CURRENT_TIMESTAMP);
+-- Test user :: username: octansosu, password: coffee123 (hashed)
+INSERT INTO user_profile (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts) VALUES
+('octansosu', '$2y$10$GPORmfRXJ3HQmVvdZbxqRu9sDxHY8HU7kFVazIfIG/7fabtadop0W', 'Octans', 'Team', 'octansosu@gmail.com', 'user_data/octansosu.png', 'N', CURRENT_TIMESTAMP);
+-- Test user :: username: testuser1, password: osu1 (hashed)
+INSERT INTO user_profile (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts) VALUES
+('testuser1', '$2a$10$FMiRrnmuac4jERlsyWd6D.JWzOV7jW3492VYyGv0MTHun/tS6xAH.', 'Test', 'User1','testuser1@test.com', 'user_data/testuser1.png', 'N', CURRENT_TIMESTAMP);
+-- Test user :: username: testuser2, password: osu2 (hashed)
+INSERT INTO user_profile (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts) VALUES
+('testuser2', '$2a$10$OrhgZM1BUlfF4j5APpNFMej7KepCoCS/MxVjkuhCUJHyrZSp06IyK', 'Test', 'User2', 'testuser2@test.com', 'user_data/testuser2.png', 'N', CURRENT_TIMESTAMP);
+-- Test user :: username: testuser3, password: osu3 (hashed)
+INSERT INTO user_profile (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts) VALUES
+('testuser3', '$2a$10$u83YaALhGrJvYAhTVs4oMumb872RTbk/BIkhuC6H.P2n30WTmNU92', 'Test', 'User3', 'testuser3@test.com', 'user_data/testuser3.png', 'N', CURRENT_TIMESTAMP);
 
 -- Insert statements for award_type table
 INSERT INTO award_type (description) VALUES
@@ -54,4 +67,4 @@ INSERT INTO award_type (description) VALUES
 
 -- Insert statements for award table
 INSERT INTO award (sender_id, recepient_id, award_type, comment, award_date) VALUES
-(1, 2, 1, 'Great job!', '2017.07.03');
+(3, 4, 1, 'Great job!', '2017.07.03');

@@ -26,9 +26,9 @@ router.post('/admin', function(req,res,next) {
 	if (req.body["insert"]) {
 		var hash = bcrypt.hashSync(req.body.password, salt);
 		
-		pool.query("INSERT INTO `user_profile` (username, password, firstname, lastname, signature, admin_flag, created_ts)" +
-					" VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
-					[req.body.username, hash, req.body.firstname, req.body.lastname, req.body.signature, req.body.admin_flag], 
+		pool.query("INSERT INTO `user_profile` (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts)" +
+					" VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
+					[req.body.username, hash, req.body.firstname, req.body.lastname, req.body.email, req.body.signature, req.body.admin_flag], 
 					function(err,result){
 			if(err){
 				if (err.code == '23505') {
@@ -57,7 +57,8 @@ router.post('/admin', function(req,res,next) {
 			context.user = [];
 			for (var p in rows) {
 				context.user.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-									"lastname":rows[p].lastname, "admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+									"lastname":rows[p].lastname, "email":rows[p].email_address, 
+									"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 			}
 			res.render('admin', context);
 		});
@@ -73,7 +74,8 @@ router.post('/admin', function(req,res,next) {
 			context.admin = [];
 			for (var p in rows) {
 				context.admin.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-									"lastname":rows[p].lastname, "admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+									"lastname":rows[p].lastname, "email":rows[p].email_address, 
+									"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 			}
 			res.render('admin', context);
 		});
@@ -91,6 +93,7 @@ router.post('/admin', function(req,res,next) {
 			//context.password  
 			context.firstname = rows[0].firstname;
 			context.lastname = rows[0].lastname;
+			context.email = rows[0].email_address;
 			//context.signature
 			context.admin_flag = rows[0].admin_flag;
 			res.render('admin-update', context);
@@ -101,8 +104,9 @@ router.post('/admin', function(req,res,next) {
 	if (req.body["update"]) {
 		var admin_flag = req.body.admin_flag;
 		
-		pool.query("UPDATE `user_profile` SET username=?, firstname=?, lastname=?, admin_flag=? WHERE id=?",
-					[req.body.username, req.body.firstname, req.body.lastname, req.body.admin_flag, req.body.id], function(err, result) {
+		pool.query("UPDATE `user_profile` SET username=?, firstname=?, lastname=?, email_address=?, admin_flag=? WHERE id=?",
+					[req.body.username, req.body.firstname, req.body.lastname, req.body.email, req.body.admin_flag, req.body.id], 
+					function(err, result) {
 			if(err) {
 				next(err);
 				return;
@@ -117,7 +121,8 @@ router.post('/admin', function(req,res,next) {
 				context.user = [];
 				for (var p in rows) {
 					context.user.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-										"lastname":rows[p].lastname, "admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 				}
 				res.render('admin', context);
 			});
@@ -131,7 +136,8 @@ router.post('/admin', function(req,res,next) {
 				context.admin = [];
 				for (var p in rows) {
 					context.admin.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-										"lastname":rows[p].lastname, "admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 				}
 				res.render('admin', context);
 			});
@@ -157,7 +163,8 @@ router.post('/admin', function(req,res,next) {
 				context.user = [];
 				for (var p in rows) {
 					context.user.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-										"lastname":rows[p].lastname, "admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 				}
 				res.render('admin', context);
 			});
@@ -171,7 +178,8 @@ router.post('/admin', function(req,res,next) {
 				context.admin = [];
 				for (var p in rows) {
 					context.admin.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-										"lastname":rows[p].lastname, "admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 				}
 				res.render('admin', context);
 			});

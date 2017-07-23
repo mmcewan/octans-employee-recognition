@@ -20,8 +20,12 @@ $( document ).ready(function() {
   });
 
   $('#complete-registration').click(function() {
-    var base64img = signaturePad.toDataURL();
-    $('#sigData').val(base64img);
+    if (signaturePad.isEmpty()) {
+      $('#complete-registration').get(0).setCustomValidity("Your signature is required to complete registration.");
+    } else {
+      var base64img = signaturePad.toDataURL();
+      $('#sigData').val(base64img);
+    }
   });
 
 });
