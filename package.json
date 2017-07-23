@@ -1,8 +1,9 @@
 {
   "name": "app",
- "engines": {
-"node": ">=8.0.0"},
-  "version": "1.0.0",
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "version": "1.0.1",
   "description": "Employee recognition system to award good behavior by employees.",
   "main": "app.js",
   "scripts": {
