@@ -1,7 +1,7 @@
 
       document.addEventListener('DOMContentLoaded', bindLogInButton);
       document.addEventListener('DOMContentLoaded', dropDown);
-  
+  /*
       function bindLogInButton(){
         document.getElementById('awardButton').addEventListener('click', function(event){
           event.preventDefault();
@@ -18,14 +18,17 @@
           
           req.open('POST', '/new_award', true);
           req.setRequestHeader('Content-Type', 'application/json');
-          /*req.addEventListener('load',function(){
+       
+          req.addEventListener('load',function(){
       		if(req.status >= 200 && req.status < 400){
       		    window.location.href="makeaward";
       		}
-      		});*/
+      		});
+      		
           req.send(JSON.stringify(payload));  
         }); 
       }
+      */
 
       function dropDown(){
           var req = new XMLHttpRequest();
