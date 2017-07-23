@@ -3,27 +3,26 @@
       document.addEventListener('DOMContentLoaded', dropDown);
   
       function bindLogInButton(){
-        document.getElementById('loginButton').addEventListener('click', function(event){
+        document.getElementById('awardButton').addEventListener('click', function(event){
           event.preventDefault();
           var req = new XMLHttpRequest();
-          var payload = {username:null, password:null};
+          var payload = {agiver:null, areceiver:null, atitle:null, amessage:null, adate:null, aemail:null, atype:null};
           
-          payload.username = document.getElementById('lusername').value;
-          payload.password = document.getElementById('lpassword').value;
+          payload.agiver = document.getElementById('agiver').value;
+          payload.areceiver = document.getElementById('areceiver').value;
+          payload.amessage = document.getElementById('amessage').value;
+          payload.adate = document.getElementById('adate').value;
+          payload.aemail = document.getElementById('aemail').value;
+          payload.atype = document.getElementById('alist').value;
+          payload.atitle = document.getElementById('atitle').value;
           
-          req.open('POST', '/auth', true);
+          req.open('POST', '/newaward', true);
           req.setRequestHeader('Content-Type', 'application/json');
           req.addEventListener('load',function(){
       		if(req.status >= 200 && req.status < 400){
-      		    window.location.href="/";
-      		} else {
-      		    var a = document.getElementById("loginResult"); 
-              var b = document.createElement("a"); 
-                b.href = "/";
-                b.text = "Log in failed. Try again.";
-                a.appendChild(b);
-                console.log("Error in network request: " + req.statusText);
-     			 }});
+      		    window.location.href="makeaward";
+      		}
+      		});
           req.send(JSON.stringify(payload));  
         }); 
       }

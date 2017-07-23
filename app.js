@@ -222,7 +222,6 @@ res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
 file.pipe(res);
 
 file.on('finish', function(){
-
 fs.unlinkSync(outputfilepath);});
 
 });
