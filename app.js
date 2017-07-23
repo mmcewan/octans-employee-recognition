@@ -220,6 +220,11 @@ res.setHeader('Content-Length', stat.size);
 res.setHeader('Content-Type', 'application/pdf');
 res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
 file.pipe(res);
+
+file.on('finish', function(){
+
+fs.unlinkSync(outputfilepath);});
+
 });
 
   /*var queryString = "select user_id, password_hash, password_salt from users " +
@@ -241,6 +246,7 @@ file.pipe(res);
       res.send("INVALID PASSWORD");
     }
   });*/
+  
   /*
   var message = {
     from: 'octansosu@gmail.com',
