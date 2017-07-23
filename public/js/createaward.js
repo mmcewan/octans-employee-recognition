@@ -1,5 +1,5 @@
 
-      document.addEventListener('DOMContentLoaded', bindLogInButton);
+  //    document.addEventListener('DOMContentLoaded', bindLogInButton);
       document.addEventListener('DOMContentLoaded', dropDown);
   /*
       function bindLogInButton(){
