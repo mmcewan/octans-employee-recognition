@@ -1,2 +1,5 @@
 pgf
 xcolor
+setspace
+eso-pic
+graphicx
