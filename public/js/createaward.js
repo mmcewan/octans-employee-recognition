@@ -18,11 +18,11 @@
           
           req.open('POST', '/newaward', true);
           req.setRequestHeader('Content-Type', 'application/json');
-          req.addEventListener('load',function(){
+          /*req.addEventListener('load',function(){
       		if(req.status >= 200 && req.status < 400){
       		    window.location.href="makeaward";
       		}
-      		});
+      		});*/
           req.send(JSON.stringify(payload));  
         }); 
       }
