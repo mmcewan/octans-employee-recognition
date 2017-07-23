@@ -16,7 +16,7 @@
           payload.atype = document.getElementById('alist').value;
           payload.atitle = document.getElementById('atitle').value;
           
-          req.open('POST', '/newaward', true);
+          req.open('POST', '/new_award', true);
           req.setRequestHeader('Content-Type', 'application/json');
           /*req.addEventListener('load',function(){
       		if(req.status >= 200 && req.status < 400){
