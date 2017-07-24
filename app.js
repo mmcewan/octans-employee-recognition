@@ -150,7 +150,7 @@ app.get('/logout', function (req, res) {
 });
 
 app.get('/session_info', isLoggedIn, function (req, res) {
-res.send(req.req.user);
+res.send(req.user);
 });
 
 // route middleware to make sure a user is logged in
