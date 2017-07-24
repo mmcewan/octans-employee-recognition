@@ -149,6 +149,10 @@ app.get('/logout', function (req, res) {
   res.redirect('/');
 });
 
+app.get('/session_info', isLoggedIn, function (req, res) {
+res.send(req.req.user);
+});
+
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
   // if user is authenticated, continue
@@ -168,7 +172,7 @@ app.listen(port, function(err) {
 /*
  route to render page with new award form
 */
-app.get('/makeaward', function(req, res, next){
+app.get('/makeaward', isLoggedIn, function(req, res, next){
 res.render('createaward.handlebars');
 });
 
@@ -176,7 +180,7 @@ res.render('createaward.handlebars');
 /*
   route to return list of award types
 */
-app.get('/awards/list', function(req, res, next){
+app.get('/awards/list', isLoggedIn, function(req, res, next){
 pool.query("select id, description from award_type;", function (err, dbres){
     if (err) {
       res.status(500);
@@ -190,11 +194,10 @@ pool.query("select id, description from award_type;", function (err, dbres){
   });
 });
 
-
 /*
-  route to create new award PDF from provided details (agiver, areceiver, atitle, amessage, date).
+  route to create new award PDF from provided details (agiver, areceiver, atitle, amessage, adate, atype, aemail).
 */
-app.post('/new_award', function(req, res, next) {
+app.post('/new_award', isLoggedIn, function(req, res, next) {
 
 var areceiver = req.body.areceiver;
 var agiver = req.body.agiver;
