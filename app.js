@@ -6,6 +6,7 @@ var app = express();
 //packages related to pdf generation and mailing
 var nodemailer = require('nodemailer');
 var xoauth2 = require('xoauth2');
+var path = require('path');
 //const path = require('path');
 var fs = require('fs');
 var latex = require('latex');
@@ -34,14 +35,20 @@ var bcrypt = require('bcryptjs');
 // Create a password salt
 var salt = bcrypt.genSaltSync(10);
 
+// package required for storing user signature images
+var cloudinary = require('cloudinary');
+
+cloudinary.config({
+  cloud_name: 'hvij0ogeg',
+  api_key: '537714322554922',
+  api_secret: 'TjuHD6aNtP1CtmvKhKo9ev6sW7U'
+});
+
 // set up authentication using passport
 var passport = require('passport');
 var session = require('express-session');
 var flash = require('connect-flash');
 var cookieParser = require('cookie-parser');
-
-// for working with file/directory paths to store user signature
-var path = require('path');
 
 require('./config/passport')(passport);
 
@@ -74,7 +81,7 @@ app.get('/login', function(req, res) {
 });
 
 app.post('/login',
-  passport.authenticate('local-login', {failureRedirect : '/login', failureFlash : true }),
+  passport.authenticate('local-login', { failureRedirect : '/login', failureFlash : true }),
   function(req, res) {
     var user = JSON.parse(req.user);
     if (user.admin_flag == 'Y') {
@@ -98,9 +105,9 @@ app.post('/signup', function (req, res) {
   // set admin flag to "N" (not admin) by default
   var adminFlag = "N";
 
-  // store path to user signature image ("user_data/username.png")
-  var sigPath = 'user_data/' + req.body.username + '.png'
-  path.join(__dirname, 'sigPath');
+  cloudinary.uploader.upload(req.body.sigData, function(result) {
+    console.log(result);
+  }, { public_id: req.body.username });
 
   // build SQL to insert new user entry into user_profile table
   var query = "insert into user_profile " +
@@ -114,7 +121,7 @@ app.post('/signup', function (req, res) {
     req.body.firstname,
     req.body.lastname,
     req.body.email,
-    sigPath,
+    cloudinary.url(req.body.username),
     adminFlag
   ], function(err, dbres) {
     if (err) {
@@ -129,11 +136,6 @@ app.post('/signup', function (req, res) {
         console.log(err);
       }
     } else {
-        // get signature data from form, prep for decoding
-        var base64data = req.body.sigData.split(',')[1];
-        // decode signature data and save image to specified path
-        var base64 = require('base64-min');
-        base64.decodeToFile(base64data, sigPath);
         req.flash('message', 'Account created successfully. Log in now!');
         res.render('login.handlebars', { message: req.flash('message') });
       }
@@ -150,7 +152,7 @@ app.get('/logout', function (req, res) {
 });
 
 app.get('/session_info', isLoggedIn, function (req, res) {
-res.send(req.user);
+  res.send(req.user);
 });
 
 // route middleware to make sure a user is logged in
