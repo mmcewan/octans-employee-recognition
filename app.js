@@ -415,7 +415,7 @@ function recordaward(giverid, receiverid, atype, amessage, adate){
 
   //res.status(200);
     // res.send("SUCCESS");
-});
+
 
 /*returns current date in mm/dd/yyyy format
 */
