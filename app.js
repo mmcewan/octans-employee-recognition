@@ -306,7 +306,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
     	
     	var receiverqueryString = "select id, email_address, firstname, lastname from user_profile " +
                     " where id = ?";
-  		pool.query(receiverqueryString, [req.body.areceiver], function(err, dbres) {
+  		pool.query(receiverqueryString, [receiverid], function(err, dbres) {
     		if (err)  {
       		res.status(500);
       		res.send("SERVER ERROR");
@@ -314,7 +314,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
     		}
     		else if (dbres.length != 1) {
       		res.status(402);
-      		res.send(req.body.areceiver);
+      		res.send(req.body);
     		}
 		    else
 		    	{
