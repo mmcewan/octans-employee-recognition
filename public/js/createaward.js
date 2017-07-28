@@ -17,7 +17,7 @@
           req.setRequestHeader('Content-Type', 'application/json');
           req.addEventListener('load', function(){
                 var response = JSON.parse(req.responseText);
-                console.log(response);}
+                console.log(response);});
           req.send(JSON.stringify(payload));  
         }); 
       }
