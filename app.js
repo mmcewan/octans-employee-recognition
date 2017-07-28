@@ -285,7 +285,7 @@ var amessage = req.body.amessage;
 var adate = getCurrentDate();
 var aemail;
 var atype = req.body.atype;
-var receiverid = req.body.id;
+var receiverid = req.body.areceiver;
 var giverid = req.user;
 
 var giverQueryString = "select id, firstname, lastname, signature from user_profile " +
@@ -314,7 +314,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
     		}
     		else if (dbres.length != 1) {
       		res.status(402);
-      		res.send(receiverid);
+      		res.send("RECEIVER USER NOT FOUND");
     		}
 		    else
 		    	{
