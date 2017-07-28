@@ -321,8 +321,17 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		    	aemail = dbres[0].email_address;
 		    	areceiver =  dbres[0].firstname + " " + dbres[0].lastname;
 		    	recordaward(giverid, receiverid, atype, amessage, adate);
-		    	createaward(agiver, areceiver, asignature, amessage, adate, atype, aemail);}
-		    	
+		    	createaward(agiver, areceiver, asignature, amessage, adate, atype, aemail);
+		    	var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
+		    	var file = fs.createReadStream(outputfilepath);
+		    	var stat = fs.statSync(outputfilepath);
+		    	res.setHeader('Content-Length', stat.size);
+		    	res.setHeader('Content-Type', 'application/pdf');
+		    	res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
+		    	file.pipe(res);
+		    	file.on('finish', function(){
+					fs.unlinkSync(outputfilepath);}
+						);}
 		    });	
 		}
 	});
@@ -354,18 +363,6 @@ var typequeryString = "select id, description from award_type " +
 				var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
 				var outputfile = fs.createWriteStream(outputfilepath);
 				var latexstream = latex(latexStrings).pipe(outputfile);
-				
-				latexstream.on('finish', function(){
-					var file = fs.createReadStream(outputfilepath);
-					var stat = fs.statSync(outputfilepath);
-					res.setHeader('Content-Length', stat.size);
-					res.setHeader('Content-Type', 'application/pdf');
-					res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
-					file.pipe(res);
-					file.on('finish', function(){
-					fs.unlinkSync(outputfilepath);}
-						);
-					});
 				}
 			});
 }
