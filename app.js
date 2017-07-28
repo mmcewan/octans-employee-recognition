@@ -346,16 +346,15 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 					var latexstream = latex(latexStrings).pipe(outputfile);
 					latexstream.on('finish', function(){
 		    		
-		    		var file = fs.createReadStream(outputfilepath);
-		    		var stat = fs.statSync(outputfilepath);
-		    		res.setHeader('Content-Length', stat.size);
-		    		res.setHeader('Content-Type', 'application/pdf');
-		    		res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
-		    		file.pipe(res);
-		    		file.on('finish', function(){
-						fs.unlinkSync(outputfilepath);}
-						);
-						});
+		    			var file = fs.createReadStream(outputfilepath);
+		    			var stat = fs.statSync(outputfilepath);
+		    			res.setHeader('Content-Length', stat.size);
+		    			res.setHeader('Content-Type', 'application/pdf');
+		    			res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
+		    			file.pipe(res);
+		    			file.on('finish', function(){
+							fs.unlinkSync(outputfilepath);});
+							});
 						}
 					});
 		    	}
@@ -363,12 +362,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		}
 	});
 });
-	
-/* function to create award and return it to client */	    	
-function createaward(agiver, areceiver, asignature, amessage, adate, atype, aemail){
 
-
-}
 
 /* function to record award in database */	    	
 function recordaward(giverid, receiverid, atype, amessage, adate){
@@ -379,8 +373,8 @@ function recordaward(giverid, receiverid, atype, amessage, adate){
     
   		pool.query(awardinsertqueryString, [giverid, receiverid, atype, amessage, adate], function(err, dbres) {
     		if (err)  {
-      		res.status(500);
-      		res.send("SERVER ERROR");
+//      		res.status(500);
+//      		res.send("SERVER ERROR");
       		console.log(err);
     		}
     	});
