@@ -325,7 +325,6 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		    	var typename;
 		    	var backgroundfile = path.join(__dirname, 'cert_resources', 'background1.jpg');
 		    	var logofile = path.join(__dirname, 'cert_resources', 'logo.png');
-		    	var signature 
 
 		    	var typequeryString = "select id, description from award_type " +
                     " where id = ?";
