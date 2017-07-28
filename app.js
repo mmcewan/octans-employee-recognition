@@ -360,7 +360,8 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		    			res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
 		    			file.pipe(res);
 		    			file.on('finish', function(){
-							fs.unlinkSync(outputfilepath);});
+							fs.unlinkSync(outputfilepath);
+							fs.unlinkSync(sigfilepath);});
 							});
 							
 							});
