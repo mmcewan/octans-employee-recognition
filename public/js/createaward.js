@@ -13,6 +13,8 @@
           payload.amessage = document.getElementById('amessage').value;
           payload.atype = document.getElementById('alist').value;
           
+          
+          //found help here: https://stackoverflow.com/questions/12876000/how-to-build-pdf-file-from-binary-string-returned-from-a-web-service-using-javas
           req.open('POST', '/new_award', true);
           req.responseType = "blob";
           req.setRequestHeader('Content-Type', 'application/json');
@@ -24,15 +26,11 @@
           		var file = window.URL.createObjectURL(this.response);
           		var a = document.createElement("a");
           		a.href = file;
-          		a.download = this.response.name || "detailPDF";
+          		a.download = this.response.name || "awardPDF";
           		document.body.appendChild(a);
           		a.click();
-          		// remove `a` following `Save As` dialog, 
-          		// `window` regains `focus`
-          		window.onfocus = function () {                     
-          		document.body.removeChild(a)
-        		}
-        	};});
+          		document.body.removeChild(a);
+        	}});
           req.send(JSON.stringify(payload));  
         }); 
       }
