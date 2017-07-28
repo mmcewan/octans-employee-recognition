@@ -297,8 +297,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
       console.log(err);
     } else if (dbres.length != 1) {
       res.status(402);
-      console.log(dbres);
-      res.send(dbres);
+      res.send("GIVER USER NOT FOUND");
     }
     else
     	{
@@ -315,7 +314,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
     		}
     		else if (dbres.length != 1) {
       		res.status(402);
-      		res.send("USER NOT FOUND");
+      		res.send("RECEIVER USER NOT FOUND");
     		}
 		    else
 		    	{
