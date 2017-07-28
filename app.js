@@ -344,17 +344,19 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 					var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
 					var outputfile = fs.createWriteStream(outputfilepath);
 					var latexstream = latex(latexStrings).pipe(outputfile);
-
-		    	var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
-		    	var file = fs.createReadStream(outputfilepath);
-		    	var stat = fs.statSync(outputfilepath);
-		    	res.setHeader('Content-Length', stat.size);
-		    	res.setHeader('Content-Type', 'application/pdf');
-		    	res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
-		    	file.pipe(res);
-		    	file.on('finish', function(){
-					fs.unlinkSync(outputfilepath);}
-						);}
+					latexstream.on('finish', function(){
+		    		
+		    		var file = fs.createReadStream(outputfilepath);
+		    		var stat = fs.statSync(outputfilepath);
+		    		res.setHeader('Content-Length', stat.size);
+		    		res.setHeader('Content-Type', 'application/pdf');
+		    		res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
+		    		file.pipe(res);
+		    		file.on('finish', function(){
+						fs.unlinkSync(outputfilepath);}
+						);
+						});
+						}
 					});
 		    	}
 			});	
