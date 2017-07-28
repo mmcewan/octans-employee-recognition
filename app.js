@@ -195,6 +195,23 @@ pool.query("select id, description from award_type;", function (err, dbres){
 });
 
 /*
+  route to return list of users
+*/
+app.get('/users/list', isLoggedIn, function(req, res, next){
+pool.query("select id, firstname, lastname, email_address from user_profile;", function (err, dbres){
+    if (err) {
+      res.status(500);
+      res.send("DB ERROR");
+      console.log(err);
+    } else {
+      res.setHeader("Content-Type", "Application/JSON");
+      res.status(200);
+      res.send(dbres);
+    }
+  });
+});
+
+/*
   route to create new award PDF from provided details (agiver, areceiver, atitle, amessage, adate, atype, aemail).
 */
 app.post('/new_award', isLoggedIn, function(req, res, next) {

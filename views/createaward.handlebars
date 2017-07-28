@@ -9,23 +9,18 @@
 <div id="awardspot">
     <form action="/new_award" method="POST">
         <fieldset>
-            <label>Award giver:</label>
-            <input type="text" name="agiver" id="agiver"><br>
-            <label>Award receiver:</label>
-            <input type="text" name="areceiver" id="areceiver"><br>
-            <label>Recipient email:</label>
-            <input type="text" name="aemail" id="aemail"><br>
-            <label>Award title:</label>
-            <input type="text" name="atitle" id="atitle"><br>
-            <label>Award message:</label>
-            <input type="text" name="amessage" id="amessage"><br>
-            <label>Award date:</label>
-            <input type="text" name="adate" id="adate"><br>
-            <div id="dropDown">
+            <div id="receiverdropDown">
+            <label>Award recipient:</label>
+            <select id="areceiver">
+            <option value="" disabled selected>Select</option>
+            </select></div>
+            <div id="typedropDown">
             <label>Award type:</label>
             <select id="alist">
             <option value="" disabled selected>Select</option>
             </select></div>
+            <label>Award message:</label>
+            <input type="text" name="amessage" id="amessage"><br>
             <input type="submit" value="Submit award" id="awardButton">
 
         </fieldset>
