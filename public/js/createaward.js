@@ -16,7 +16,7 @@
           req.open('POST', '/new_award', true);
           req.setRequestHeader('Content-Type', 'application/json');
           req.addEventListener('load', function(){
-                var response = JSON.parse(req.responseText);
+                var response = req.responseText;
                 console.log(response);});
           req.send(JSON.stringify(payload));  
         }); 
