@@ -373,9 +373,7 @@ function recordaward(giverid, receiverid, atype, amessage, adate){
     
   		pool.query(awardinsertqueryString, [giverid, receiverid, atype, amessage, adate], function(err, dbres) {
     		if (err)  {
-//      		res.status(500);
-//      		res.send("SERVER ERROR");
-      		console.log(err);
+	      		console.log(err);
     		}
     	});
     }
@@ -428,6 +426,6 @@ function recordaward(giverid, receiverid, atype, amessage, adate){
     		mm = '0'+mm
 			} 
 
-		today = mm + '/' + dd + '/' + yyyy;
+		today = mm + '.' + dd + '.' + yyyy;
 		return today;
 	}
