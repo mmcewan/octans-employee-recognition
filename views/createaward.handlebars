@@ -1,14 +1,14 @@
-<!DOCTYPE html>
-<html>
-<body>
-
-<h2>Create new award</h2>
-<p>Enter information about award recipient, type, and award presenter to create a new award</p>
-<p>For demonstration purposes, an award will be returned to the user's browser; PDF emailing will come later.</p>
-
-<div id="awardspot">
-    <form action="/new_award" method="POST">
-        <fieldset>
+<!-- Wrapper -->
+<section id="wrapper">
+  <!-- Registration -->
+  <section id="register" class="wrapper">
+    <div class="inner">
+      <h2 class="major">Create New Award</h2>
+      <p>Enter information about award recipient, type, and award presenter to create a new award</p>
+      <p>For demonstration purposes, an award will be returned to the user's browser; PDF emailing will come later.</p>
+      <div id="awardspot">
+        <form action="/new_award" method="POST">
+          <fieldset>
             <label>Award giver:</label>
             <input type="text" name="agiver" id="agiver"><br>
             <label>Award receiver:</label>
@@ -23,17 +23,18 @@
             <input type="text" name="adate" id="adate"><br>
             <div id="dropDown">
             <label>Award type:</label>
-            <select id="alist">
-            <option value="" disabled selected>Select</option>
-            </select></div>
+              <select id="alist">
+              <option value="" disabled selected>Select</option>
+              </select>
+            </div>
             <input type="submit" value="Submit award" id="awardButton">
-
-        </fieldset>
-    </form>
-</div>
-<br>
-<div id="awardResult"></div>
+          </fieldset>
+        </form>
+      </div>
+      <br>
+      <div id="awardResult"></div>
+    </div>
+  </section>
+</section>
 
 <script src="./js/createaward.js"></script>
-</body>
-</html>
