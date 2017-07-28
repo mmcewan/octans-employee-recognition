@@ -426,6 +426,6 @@ function recordaward(giverid, receiverid, atype, amessage, adate){
     		mm = '0'+mm
 			} 
 
-		today = mm + '.' + dd + '.' + yyyy;
+		today = yyyy + '.' + mm  + '.' + dd;
 		return today;
 	}
