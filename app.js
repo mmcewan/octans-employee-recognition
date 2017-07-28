@@ -321,7 +321,30 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		    	aemail = dbres[0].email_address;
 		    	areceiver =  dbres[0].firstname + " " + dbres[0].lastname;
 		    	recordaward(giverid, receiverid, atype, amessage, adate);
-		    	createaward(agiver, areceiver, asignature, amessage, adate, atype, aemail);
+		    	var typename;
+		    	var backgroundfile = path.join(__dirname, 'cert_resources', 'background1.jpg');
+		    	var logofile = path.join(__dirname, 'cert_resources', 'logo.png');
+
+		    	var typequeryString = "select id, description from award_type " +
+                    " where id = ?";
+  			    		pool.query(typequeryString, [atype], function(err, dbres) {
+		    	if (err)  {
+		    		res.status(500);
+		    		res.send("SERVER ERROR");
+      				console.log(err);
+    			}
+    			else if (dbres.length != 1) {
+      				res.status(402);
+      				res.send("AWARD NOT FOUND");
+    				}
+		    	else
+		    		{
+		    		typename = dbres[0].description;
+					var latexStrings = ["\\documentclass[tikz]{article}", "\\usepackage{color}", "\\usepackage{tikz}", "\\usepackage[landscape,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}", "\\usepackage[T1]{fontenc}", "\\usepackage{setspace}", "\\usepackage{graphicx}", "\\usepackage{eso-pic}", "\\newcommand \\BackgroundPic{\\put(0,0){\\parbox[b][\\paperheight]{\\paperwidth}{\\vfill \\centering \\includegraphics[height = \\paperheight, width = \\paperwidth]{" + backgroundfile +"} \\vfill}}}",  "\\begin{document}", "\\AddToShipoutPicture{\\BackgroundPic}", "\\pagenumbering{gobble}", "\\noindent", "\\makebox[\\textwidth][c]", "{\\begin{minipage}[c]{1.5\\textwidth}", "\\centering \\Huge \\color{red} Octans Group Company\\vskip0.8em \\large Corvallis, OR\\vskip0.8em \\large \\color{black} Employee Recognition Award: \\vskip3.8em \\Huge \\color{red}" + typename + " \\vskip0.8em \\large \\color{black}Award date: \\color{red}" + adate + "\\vskip0.8em  \\large \\color{black}Awarded to: \\color{red}" + areceiver + "\\vskip0.8em  \\large \\color{black} Recognized by: \\color{red}" + agiver + "\\vskip0.8em  \\large \\color{black}" + amessage + "\\par \\end{minipage}}", "\\begin{tikzpicture}[remember picture,overlay]\\node[anchor=north east,inner sep=0pt] at ($(current page.north east) + (-4in,-2in)$){\\includegraphics[width=4cm, height=4cm]{" + logofile + "}} \\end{tikzpicture}", "\\end{document}" ];
+					var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
+					var outputfile = fs.createWriteStream(outputfilepath);
+					var latexstream = latex(latexStrings).pipe(outputfile);
+
 		    	var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
 		    	var file = fs.createReadStream(outputfilepath);
 		    	var stat = fs.statSync(outputfilepath);
@@ -332,7 +355,9 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		    	file.on('finish', function(){
 					fs.unlinkSync(outputfilepath);}
 						);}
-		    });	
+					});
+		    	}
+			});	
 		}
 	});
 });
@@ -340,31 +365,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 /* function to create award and return it to client */	    	
 function createaward(agiver, areceiver, asignature, amessage, adate, atype, aemail){
 
-var typename;
-var backgroundfile = path.join(__dirname, 'cert_resources', 'background1.jpg');
-var logofile = path.join(__dirname, 'cert_resources', 'logo.png');
 
-var typequeryString = "select id, description from award_type " +
-                    " where id = ?";
-  		pool.query(typequeryString, [atype], function(err, dbres) {
-    		if (err)  {
-      		res.status(500);
-      		res.send("SERVER ERROR");
-      		console.log(err);
-    		}
-    		else if (dbres.length != 1) {
-      		res.status(402);
-      		res.send("AWARD NOT FOUND");
-    		}
-		    else
-		    	{
-		    	typename = dbres[0].description;
-				var latexStrings = ["\\documentclass[tikz]{article}", "\\usepackage{color}", "\\usepackage{tikz}", "\\usepackage[landscape,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}", "\\usepackage[T1]{fontenc}", "\\usepackage{setspace}", "\\usepackage{graphicx}", "\\usepackage{eso-pic}", "\\newcommand \\BackgroundPic{\\put(0,0){\\parbox[b][\\paperheight]{\\paperwidth}{\\vfill \\centering \\includegraphics[height = \\paperheight, width = \\paperwidth]{" + backgroundfile +"} \\vfill}}}",  "\\begin{document}", "\\AddToShipoutPicture{\\BackgroundPic}", "\\pagenumbering{gobble}", "\\noindent", "\\makebox[\\textwidth][c]", "{\\begin{minipage}[c]{1.5\\textwidth}", "\\centering \\Huge \\color{red} Octans Group Company\\vskip0.8em \\large Corvallis, OR\\vskip0.8em \\large \\color{black} Employee Recognition Award: \\vskip3.8em \\Huge \\color{red}" + typename + " \\vskip0.8em \\large \\color{black}Award date: \\color{red}" + adate + "\\vskip0.8em  \\large \\color{black}Awarded to: \\color{red}" + areceiver + "\\vskip0.8em  \\large \\color{black} Recognized by: \\color{red}" + agiver + "\\vskip0.8em  \\large \\color{black}" + amessage + "\\par \\end{minipage}}", "\\begin{tikzpicture}[remember picture,overlay]\\node[anchor=north east,inner sep=0pt] at ($(current page.north east) + (-4in,-2in)$){\\includegraphics[width=4cm, height=4cm]{" + logofile + "}} \\end{tikzpicture}", "\\end{document}" ];
-				var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
-				var outputfile = fs.createWriteStream(outputfilepath);
-				var latexstream = latex(latexStrings).pipe(outputfile);
-				}
-			});
 }
 
 /* function to record award in database */	    	

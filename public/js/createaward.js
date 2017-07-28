@@ -35,7 +35,6 @@
         }); 
       }
 
-
 //populate award type drop down menu
       function typedropDown(){
           var req = new XMLHttpRequest();
