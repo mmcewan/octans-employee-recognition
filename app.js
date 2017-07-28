@@ -48,7 +48,6 @@ cloudinary.config({
 var passport = require('passport');
 var session = require('express-session');
 var flash = require('connect-flash');
-var cookieParser = require('cookie-parser');
 
 require('./config/passport')(passport);
 
@@ -57,11 +56,10 @@ app.use(session({
   secret: 'keyboard dog',
   resave: true,
   saveUninitialized: true,
-  cookie: { maxAge : 60000 }
+  cookie: { maxAge : 600000 }
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(cookieParser());
 app.use(flash());
 
 // allow express to use static files in public directory
