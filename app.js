@@ -289,7 +289,7 @@ var receiverid = req.body.id;
 var giverid = req.user;
 
 var giverQueryString = "select id, firstname, lastname, signature from user_profile " +
-                    " where id = ?";
+                    " where username = ?";
   pool.query(giverQueryString, [req.user], function(err, dbres) {
     if (err)  {
       res.status(500);
@@ -302,10 +302,11 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
     else
     	{
     	agiver = dbres[0].firstname + " " + dbres[0].lastname;
+    	giverid = dbres[0].id;
     	
     	var receiverqueryString = "select id, email_address, firstname, lastname from user_profile " +
                     " where id = ?";
-  		pool.query(receiverqueryString, [req.body.id], function(err, dbres) {
+  		pool.query(receiverqueryString, [receiverid], function(err, dbres) {
     		if (err)  {
       		res.status(500);
       		res.send("SERVER ERROR");
