@@ -301,6 +301,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
     }
     else
     	{
+    	asignature = dbres[0].signature;
     	agiver = dbres[0].firstname + " " + dbres[0].lastname;
     	giverid = dbres[0].id;
     	
@@ -324,6 +325,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		    	var typename;
 		    	var backgroundfile = path.join(__dirname, 'cert_resources', 'background1.jpg');
 		    	var logofile = path.join(__dirname, 'cert_resources', 'logo.png');
+		    	var signature 
 
 		    	var typequeryString = "select id, description from award_type " +
                     " where id = ?";
@@ -340,7 +342,8 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		    	else
 		    		{
 		    		typename = dbres[0].description;
-					var latexStrings = ["\\documentclass[tikz]{article}", "\\usepackage{color}", "\\usepackage{tikz}", "\\usepackage[landscape,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}", "\\usepackage[T1]{fontenc}", "\\usepackage{setspace}", "\\usepackage{graphicx}", "\\usepackage{eso-pic}", "\\newcommand \\BackgroundPic{\\put(0,0){\\parbox[b][\\paperheight]{\\paperwidth}{\\vfill \\centering \\includegraphics[height = \\paperheight, width = \\paperwidth]{" + backgroundfile +"} \\vfill}}}",  "\\begin{document}", "\\AddToShipoutPicture{\\BackgroundPic}", "\\pagenumbering{gobble}", "\\noindent", "\\makebox[\\textwidth][c]", "{\\begin{minipage}[c]{1.5\\textwidth}", "\\centering \\Huge \\color{red} Octans Group Company\\vskip0.8em \\large Corvallis, OR\\vskip0.8em \\large \\color{black} Employee Recognition Award: \\vskip3.8em \\Huge \\color{red}" + typename + " \\vskip0.8em \\large \\color{black}Award date: \\color{red}" + adate + "\\vskip0.8em  \\large \\color{black}Awarded to: \\color{red}" + areceiver + "\\vskip0.8em  \\large \\color{black} Recognized by: \\color{red}" + agiver + "\\vskip0.8em  \\large \\color{black}" + amessage + "\\par \\end{minipage}}", "\\begin{tikzpicture}[remember picture,overlay]\\node[anchor=north east,inner sep=0pt] at ($(current page.north east) + (-4in,-2in)$){\\includegraphics[width=4cm, height=4cm]{" + logofile + "}} \\end{tikzpicture}", "\\end{document}" ];
+		    		
+					var latexStrings = ["\\documentclass[tikz]{article}", "\\usepackage{color}", "\\usepackage{tikz}", "\\usepackage[landscape,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}", "\\usepackage[T1]{fontenc}", "\\usepackage{setspace}", "\\usepackage{graphicx}", "\\usepackage{eso-pic}", "\\newcommand \\BackgroundPic{\\put(0,0){\\parbox[b][\\paperheight]{\\paperwidth}{\\vfill \\centering \\includegraphics[height = \\paperheight, width = \\paperwidth]{" + backgroundfile +"} \\vfill}}}",  "\\begin{document}", "\\AddToShipoutPicture{\\BackgroundPic}", "\\pagenumbering{gobble}", "\\noindent", "\\makebox[\\textwidth][c]", "{\\begin{minipage}[c]{1.5\\textwidth}", "\\centering \\Huge \\color{red} Octans Group Company\\vskip0.8em \\large Corvallis, OR\\vskip0.8em \\large \\color{black} Employee Recognition Award: \\vskip3.8em \\Huge \\color{red}" + typename + " \\vskip0.8em \\large \\color{black}Award date: \\color{red}" + adate + "\\vskip0.8em  \\large \\color{black}Awarded to: \\color{red}" + areceiver + "\\vskip0.8em  \\large \\color{black} Recognized by: \\color{red}" + agiver + "\\vskip0.8em  \\large \\color{black}" + amessage + "\\par \\end{minipage}}", "\\begin{tikzpicture}[remember picture,overlay]\\node[anchor=north east,inner sep=0pt] at ($(current page.north east) + (-4in,-2in)$){\\includegraphics[width=4cm, height=4cm]{" + logofile + "}} \\end{tikzpicture}", "\\begin{tikzpicture}[remember picture,overlay]\\node[anchor=south east,inner sep=0pt] at ($(current page.south east) + (+4in,-2in)$){\\includegraphics[width=4cm, height=4cm]{" + asignature + "}} \\end{tikzpicture}","\\end{document}" ];
 					var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
 					var outputfile = fs.createWriteStream(outputfilepath);
 					var latexstream = latex(latexStrings).pipe(outputfile);
