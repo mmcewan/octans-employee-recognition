@@ -368,7 +368,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 function recordaward(giverid, receiverid, atype, amessage, adate){
 
 	var awardinsertqueryString = "insert into award " +
-    	"(sender_id, recipient_id, award_type, comment, award_date)" +
+    	"(sender_id, recepient_id, award_type, comment, award_date)" +
 	    " values ( ?, ?, ?, ?, ?);";
     
   		pool.query(awardinsertqueryString, [giverid, receiverid, atype, amessage, adate], function(err, dbres) {
