@@ -1,5 +1,65 @@
-<h1>You're Logged In!!!</h1>
-{{#if message}}
-    <div> {{ message }} </div>
-{{/if}}
-<a href="/logout">Log Out</a></li>
+<!-- Wrapper -->
+<section id="wrapper">
+  <!-- User account -->
+    <section id="account" class="wrapper">
+        <div class="inner">
+          <h2 class="major">My Octans Account</h2>
+          <ul class="actions">
+            <li><a href="/makeaward" class="button">Give An Award</a></li>
+            <li><a href="/myawards" class="button">My Awards</a></li>
+            <li><a href="/awardsgiven" class="button">Awards Given</a></li>
+            <li><a href="/myprofile" class="button">Update Profile</a></li>
+            <li><a href="/logout" class="button">Log Out</a></li>
+          </ul>
+
+        {{#if message}}
+          <h3>{{message}}</h3>
+        {{/if}}
+
+        {{#if awardsgiven}}
+        <table>
+          <tr>
+            <th>Recepient</th>
+            <th>Award Type</th>
+            <th>Comment</th>
+            <th colspan="2">Date</th>
+          </tr>
+          {{#each awardsgiven}}
+          <tr>
+            <td>{{this.firstname}} {{this.lastname}}</td>
+            <td>{{this.description}}</td>
+            <td>{{this.comment}}</td>
+            <td>{{this.award_date}}</td>
+            <form id="delete" method="post" action="/awardsgiven">
+              <td>
+                <input type="submit" name="delete" value="Delete">
+                <input type="hidden" name="id" value="{{this.id}}">
+              </td>
+            </form>
+          </tr>
+          {{/each}}
+        </table>
+        {{/if}}
+
+        {{#if myawards}}
+        <table>
+          <tr>
+            <th>From</th>
+            <th>Award Type</th>
+            <th>Comment</th>
+            <th>Date</th>
+          </tr>
+          {{#each myawards}}
+          <tr>
+            <td>{{this.firstname}} {{this.lastname}}</td>
+            <td>{{this.description}}</td>
+            <td>{{this.comment}}</td>
+            <td>{{this.award_date}}</td>
+          </tr>
+          {{/each}}
+        </table>
+        {{/if}}
+
+      </div>
+    </section>
+</section>
