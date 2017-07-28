@@ -1,6 +1,7 @@
 // Basic admin user functionalities (add/edit/delete normal users and admin users)
 
 var express = require('express');
+var path = require('path');
 var router = new express.Router();
 
 var mysql = require('mysql');
@@ -47,33 +48,16 @@ router.post('/admin', function(req,res,next) {
 		});
 	}
 	
-	// Displays users for management
-	if (req.body["users"]) {
-		pool.query("SELECT * FROM `user_profile` WHERE admin_flag = 'N'", function(err, rows, field) {
+	// Displays accounts for management
+	if (req.body["accounts"]) {
+		pool.query("SELECT * FROM `user_profile`", function(err, rows, field) {
 			if(err) {
 				next(err);
 				return;
 			}
-			context.user = [];
+			context.account = [];
 			for (var p in rows) {
-				context.user.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-									"lastname":rows[p].lastname, "email":rows[p].email_address, 
-									"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
-			}
-			res.render('admin', context);
-		});
-	}
-
-	// Displays admins for management
-	if (req.body["admins"]) {
-		pool.query("SELECT * FROM `user_profile` WHERE admin_flag = 'Y'", function(err, rows, field) {
-			if(err) {
-				next(err);
-				return;
-			}
-			context.admin = [];
-			for (var p in rows) {
-				context.admin.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+				context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
 									"lastname":rows[p].lastname, "email":rows[p].email_address, 
 									"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 			}
@@ -81,7 +65,7 @@ router.post('/admin', function(req,res,next) {
 		});
 	}
 	
-	// Allow admin to edit user/admin information 
+	// Allow admin to edit account information 
 	if (req.body["edit"]) {
 		pool.query("SELECT * FROM `user_profile` WHERE id=?", [req.body.id], function(err, rows, fields) {
 			if(err) {
@@ -89,8 +73,7 @@ router.post('/admin', function(req,res,next) {
 				return;
 			}
 			context.id = rows[0].id;
-			context.username = rows[0].username;
-			//context.password  
+			context.username = rows[0].username; 
 			context.firstname = rows[0].firstname;
 			context.lastname = rows[0].lastname;
 			context.email = rows[0].email_address;
@@ -100,7 +83,7 @@ router.post('/admin', function(req,res,next) {
 		});
 	}
 	
-	// Update the edited user/admin data to database
+	// Update the edited account data to database
 	if (req.body["update"]) {
 		var admin_flag = req.body.admin_flag;
 		
@@ -112,39 +95,23 @@ router.post('/admin', function(req,res,next) {
 				return;
 			}		
 		});
-		if (admin_flag == 'N') {
-			pool.query("SELECT * FROM `user_profile` WHERE admin_flag = 'N'", function(err, rows, field) {
-				if(err) {
-					next(err);
-					return;
-				}
-				context.user = [];
-				for (var p in rows) {
-					context.user.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-										"lastname":rows[p].lastname, "email":rows[p].email_address, 
-										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
-				}
-				res.render('admin', context);
-			});
-		}
-		else {
-			pool.query("SELECT * FROM `user_profile` WHERE admin_flag = 'Y'", function(err, rows, field) {
-				if(err) {
-					next(err);
-					return;
-				}
-				context.admin = [];
-				for (var p in rows) {
-					context.admin.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-										"lastname":rows[p].lastname, "email":rows[p].email_address, 
-										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
-				}
-				res.render('admin', context);
-			});
-		}
+		// Does not reflect update on the screen as soon as I wanted
+		pool.query("SELECT * FROM `user_profile`", function(err, rows, field) {
+			if(err) {
+				next(err);
+				return;
+			}
+			context.account = [];
+			for (var p in rows) {
+				context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+									"lastname":rows[p].lastname, "email":rows[p].email_address, 
+									"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+			}
+			res.render('admin', context);
+		});
 	}
 	
-	// Delete user/admin
+	// Delete account
 	if (req.body["delete"]) {
 		var admin_flag = req.body.admin_flag;
 		
@@ -154,30 +121,123 @@ router.post('/admin', function(req,res,next) {
 				return;
 			}
 		});
-		if (admin_flag == 'N') {
-			pool.query("SELECT * FROM `user_profile` WHERE admin_flag = 'N'", function(err, rows, field) {
+		// Does not reflect update on the screen as soon as I wanted
+		pool.query("SELECT * FROM `user_profile`", function(err, rows, field) {
+			if(err) {
+				next(err);
+				return;
+			}
+			context.account = [];
+			for (var p in rows) {
+				context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+									"lastname":rows[p].lastname, "email":rows[p].email_address, 
+									"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+			}
+			res.render('admin', context);
+		});
+	}
+	
+	if (req.body["sortby"]) {
+		var selected = req.body.selectpicker;
+		if (selected == "username") {
+			pool.query("SELECT * FROM `user_profile` ORDER BY username ASC", function(err, rows, field) {
 				if(err) {
 					next(err);
 					return;
 				}
-				context.user = [];
+				context.account = [];
 				for (var p in rows) {
-					context.user.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
 										"lastname":rows[p].lastname, "email":rows[p].email_address, 
 										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 				}
 				res.render('admin', context);
 			});
+		}
+		else if (selected == "firstname") {
+			pool.query("SELECT * FROM `user_profile` ORDER BY firstname ASC", function(err, rows, field) {
+				if(err) {
+					next(err);
+					return;
+				}
+				context.account = [];
+				for (var p in rows) {
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+				}
+				res.render('admin', context);
+			});
+		}
+		else if (selected == "lastname") {
+			pool.query("SELECT * FROM `user_profile` ORDER BY lastname ASC", function(err, rows, field) {
+				if(err) {
+					next(err);
+					return;
+				}
+				context.account = [];
+				for (var p in rows) {
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+				}
+				res.render('admin', context);
+			});
+		}
+		else if (selected == "email_address") {
+			pool.query("SELECT * FROM `user_profile` ORDER BY email_address ASC", function(err, rows, field) {
+				if(err) {
+					next(err);
+					return;
+				}
+				context.account = [];
+				for (var p in rows) {
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+				}
+				res.render('admin', context);
+			});
+		}
+		else if (selected == "admin_flag") {
+			pool.query("SELECT * FROM `user_profile` ORDER BY admin_flag ASC", function(err, rows, field) {
+				if(err) {
+					next(err);
+					return;
+				}
+				context.account = [];
+				for (var p in rows) {
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+				}
+				res.render('admin', context);
+			});
+		}
+		else if (selected="creation_time") {
+			pool.query("SELECT * FROM `user_profile` ORDER BY created_ts ASC", function(err, rows, field) {
+				if(err) {
+					next(err);
+					return;
+				}
+				context.account = [];
+				for (var p in rows) {
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+				}
+				res.render('admin', context);
+			});	
 		}
 		else {
-			pool.query("SELECT * FROM `user_profile` WHERE admin_flag = 'Y'", function(err, rows, field) {
+			pool.query("SELECT * FROM `user_profile`", function(err, rows, field) {
 				if(err) {
 					next(err);
 					return;
 				}
-				context.admin = [];
+				context.account = [];
 				for (var p in rows) {
-					context.admin.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
 										"lastname":rows[p].lastname, "email":rows[p].email_address, 
 										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 				}
@@ -187,11 +247,32 @@ router.post('/admin', function(req,res,next) {
 	}
 	
 	
-	/*	
-	if (req.body["reports") {
+	if (req.body["reports"]) {
+		var num_users = 0;
+		var num_awards = 0;
 		
+		pool.query("SELECT * FROM `user_profile`", function(err, rows, field) {
+			if(err) {
+				next(err);
+				return;
+			}
+			for (var p in rows) {
+				num_users++;
+			}
+			pool.query("SELECT * FROM `award`", function(err, rows, field) {
+				if(err) {
+					next(err);
+					return;
+				}
+				for (var p in rows) {
+					num_awards++;
+				}
+				context.report = [];
+				context.report.push({"num_users":num_users, "num_awards":num_awards});
+				res.render('admin', context);
+			});
+		});
 	}
-	*/
 });
 
 
