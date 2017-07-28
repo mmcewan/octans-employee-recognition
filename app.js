@@ -146,6 +146,68 @@ app.get('/account', isLoggedIn, function (req, res) {
   res.render('account.handlebars');
 });
 
+app.get('/myawards', isLoggedIn, function (req, res, next) {
+  var context = {};
+  var query = "select up.firstname, up.lastname, atype.description, a.comment, a.award_date, a.id"
+  + " from award a"
+  + " inner join user_profile up on up.id = a.sender_id"
+  + " inner join user_profile up2 on up2.id = a.recepient_id"
+  + " inner join award_type atype on atype.id = a.award_type"
+  + " where up2.username = '" + req.user + "';";
+
+    pool.query(query, function(err, rows, field) {
+      if(err) {
+        next(err);
+        return;
+      }
+      if (rows.length > 0) {
+        context.myawards = rows;
+      } else {
+        context.message = "No awards received.";
+      }
+      res.render('account.handlebars', context);
+    })
+});
+
+app.get('/awardsgiven', isLoggedIn, function (req, res, next) {
+  var context = {};
+  var query = "select up2.firstname, up2.lastname, atype.description, a.comment, a.award_date, a.id"
+  + " from award a"
+  + " inner join user_profile up on up.id = a.sender_id"
+  + " inner join user_profile up2 on up2.id = a.recepient_id"
+  + " inner join award_type atype on atype.id = a.award_type"
+  + " where up.username = '" + req.user + "';";
+
+    pool.query(query, function(err, rows, field) {
+      if(err) {
+        next(err);
+        return;
+      }
+      if (rows.length > 0) {
+        context.awardsgiven = rows;
+      } else {
+        context.message = "No awards given.";
+      }
+      res.render('account.handlebars', context);
+    })
+});
+
+app.post('/awardsgiven', isLoggedIn, function (req, res, next) {
+  var context = {};
+  var query = "delete from award where id = " + req.body.id + ";";
+  console.log(query);
+  if (req.body["delete"]) {
+    pool.query(query, function(err, rows, field) {
+      if(err) {
+        next(err);
+        return;
+      }
+      context.message = "Award deleted.";
+      res.render('account.handlebars', context);
+    })
+  }
+});
+
 app.get('/logout', function (req, res) {
   req.logout();
   res.redirect('/');
@@ -175,7 +237,7 @@ app.listen(port, function(err) {
  route to render page with new award form
 */
 app.get('/makeaward', isLoggedIn, function(req, res, next){
-res.render('createaward.handlebars');
+  res.render('createaward.handlebars');
 });
 
 
@@ -250,7 +312,7 @@ fs.unlinkSync(outputfilepath);});
       res.send("INVALID PASSWORD");
     }
   });*/
-  
+
   /*
   var message = {
     from: 'octansosu@gmail.com',
