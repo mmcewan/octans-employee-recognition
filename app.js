@@ -314,7 +314,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
     		}
     		else if (dbres.length != 1) {
       		res.status(402);
-      		res.send(req.body);
+      		res.send("RECEIVER USER NOT FOUND");
     		}
 		    else
 		    	{
