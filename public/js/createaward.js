@@ -1,6 +1,7 @@
 
   //    document.addEventListener('DOMContentLoaded', bindLogInButton);
       document.addEventListener('DOMContentLoaded', typedropDown);
+      document.addEventListener('DOMContentLoaded', userdropDown);
   /*
       function bindLogInButton(){
         document.getElementById('awardButton').addEventListener('click', function(event){
