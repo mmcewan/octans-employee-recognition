@@ -4,7 +4,7 @@ html
 		script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js")
 		
 	body
-		canvas(id="myChart" width="200" height="80")
+		canvas(id="myChart" width="600" height="500")
 
 		script. 
 			window.onload = function() {
@@ -16,12 +16,16 @@ html
 						labels: ["Educational", "Innovative", "Inspiring", "Teamwork", "Thank you"],
 						datasets: [{
 							label: 'Number of Awards',
-							backgroundColor: 'rgb(255, 99, 132)',
-							borderColor: 'rgb(255, 99, 132)',
+							backgroundColor: 'rgba(255,99,132,0.2)',
+							borderColor: 'rgba(255,99,132,1)',
+							borderWidth: 2,
+							hoverBackgroundColor: 'rgba(255,99,132,0.6)',
+							hoverBorderColor: 'rgba(255,99,132,1)',
 							data: [edu, inno, ins, team, ty],
 						}],
 					},
 					options: {
+						responsive: false,
 						title: { 
 							display: true,
 							text: "Types of Awards Created",
@@ -33,6 +37,11 @@ html
 							yAxes: [{
 								ticks:  {
 									beginAtZero: true
+								}
+							}],
+							xAxes: [{
+								gridLines: {
+									display: false
 								}
 							}]
 						},
