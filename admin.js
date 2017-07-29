@@ -1,19 +1,49 @@
 // Basic admin user functionalities (add/edit/delete normal users and admin users)
 
 var express = require('express');
-var path = require('path');
 var router = new express.Router();
+var path = require('path');
 
+// database
 var mysql = require('mysql');
 var dbconfig = require('./config/database.json');
 var pool = new mysql.createPool(dbconfig);
 
+// password
 var bcrypt = require('bcryptjs');
 var salt = bcrypt.genSaltSync(10);
+
 
 router.get('/admin', function(req,res,next) {
 	res.render('admin');
 });
+
+router.get('/report1', function(req,res,next) {
+	//var context = {};
+	var num_edu = 0, num_inno = 0, num_ins = 0, num_team = 0, num_ty = 0;
+	
+	q = "SELECT award_type.description FROM `award_type`" +
+		"INNER JOIN `award` ON award.award_type = award_type.id";
+		
+	pool.query(q, function(err, rows, field) {
+		if(err) {
+			next(err);
+			return;
+		}
+		for (var p in rows) {
+			switch(rows[p].description) {
+				case "Educational": num_edu++; break;
+				case "Innovative": num_inno++; break;
+				case "Inspiring": num_ins++; break;
+				case "Teamwork": num_team++; break;
+				case "Thank you": num_ty++; break;
+			}
+		}
+		var context = {num_edu, num_inno, num_ins, num_team, num_ty};
+		res.render('index.pug', context);
+	});
+});
+
 
 router.post('/admin', function(req,res,next) {
 	var context = {};
