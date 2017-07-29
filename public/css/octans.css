@@ -9,8 +9,17 @@
   height: 100px;
 }
 
+#title {
+	margin: 20px;
+}
+
+.inside {
+	margin: 10px 20px 10px 20px;
+}
+
 .report_btn {
 	opacity: 1.0 !important;
 	margin-right: 20px;
 	cursor: default;
 }
+

@@ -1,4 +1,4 @@
-<h1>Admin Page</h1>
+<h1 id="title">Admin Page</h1>
 
 <form method="post">
 	<input type="submit" name="add-new" value="Add New Account">
@@ -6,17 +6,24 @@
 	<input type="submit" name="reports" value="Reports">
 </form>
 
-<div class="inner">
+<div class="inside">
 	{{#if message}}
+		<hr/>
 		<h4>{{ message }}</h4>
 	{{/if}}
 </div>
 
 {{#if report}}
 	{{#each report}}
-		<button type="button" class="report_btn" disabled>{{this.num_users}} users</button>
-		<button type="button" class="report_btn" disabled>{{this.num_awards}} awards</button><br/><br/>
-		<a href="/report1" class="button" target="_blank">Types of Awards Created</a>
+		<hr/>
+		<div class="inside">
+			<h3>Statistics</h3>
+			<button type="button" class="report_btn" disabled>{{this.num_users}} users</button>
+			<button type="button" class="report_btn" disabled>{{this.num_awards}} awards</button><br/><br/>
+			
+			<h3>Charts</h3>
+			<a href="/report1" class="button" target="_blank">Types of Awards Created</a>
+		</div>
 	{{/each}}
 {{/if}}
 
