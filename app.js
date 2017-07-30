@@ -389,7 +389,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
             					user         : "octansosu",
             					clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
             					clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
-            					refreshToken : "1/3_8LW7zocr5EMYemekC68W-IFBO2W26enLJgLySmoH4"
+            					refreshToken : "1/XWkQgtJHTEYFRABiJ_y_Nvoii3Y8rVy_Bzp53TujarA"
         						}
       							});
 
@@ -422,38 +422,6 @@ function recordaward(giverid, receiverid, atype, amessage, adate){
     		}
     	});
     }
-
-  /*
-  var message = {
-    from: 'octansosu@gmail.com',
-    to: aemail,
-    subject: "Congratulations, you have received an award!",
-    text: "Congrats, someone has created an award for you through the Octans Employee Recognition System. Please download the attached PDF to view your award."
-    attachments: [
-        {
-            filename: 'output.pdf',
-            path: './pdf_temp/output.pdf'
-        }]};
-
-  var smtpTransport = nodemailer.createTransport(
-        {
-        service: "gmail",
-        auth: {
-          type: "OAuth2",
-            user         : "octansosu",
-            clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
-            clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
-            refreshToken : "1/3_8LW7zocr5EMYemekC68W-IFBO2W26enLJgLySmoH4",
-            accessToken  : "ya29.GluGBF45d5ws0x1Y0oG_0fwstBuJOvqnwbKJoAmAQiidFuD-IcVQ9jR1bChPLMh37ZLS6x7MHqos000pgmhCVUKYVHSJlChXKkZeN_TpVluShSS_145vt7bO7bZS"
-        }
-      });
-
-  smtpTransport.sendMail(message);
-*/
-
-  //res.status(200);
-    // res.send("SUCCESS");
-
 
 /*returns current date in mm/dd/yyyy format
 */
