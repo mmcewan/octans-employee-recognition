@@ -5,9 +5,7 @@ var app = express();
 
 //packages related to pdf generation and mailing
 var nodemailer = require('nodemailer');
-var xoauth2 = require('xoauth2');
 var path = require('path');
-//const path = require('path');
 var fs = require('fs');
 var latex = require('latex');
 
@@ -38,6 +36,7 @@ var salt = bcrypt.genSaltSync(10);
 // package required for storing user signature images
 var cloudinary = require('cloudinary');
 
+//should this move to config file?
 cloudinary.config({
   cloud_name: 'hvij0ogeg',
   api_key: '537714322554922',
@@ -343,7 +342,9 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		    		var http = require('http');
 		    		var sigfilepath = path.join(__dirname, 'cert_resources', 'file.jpg');
 		    		var file = fs.createWriteStream(sigfilepath);
+		    		
 					var get_cloud_image = http.get(asignature, function(response) {
+					
   						response.pipe(file);
   						var backgroundfile = path.join(__dirname, 'cert_resources', 'background1.jpg');
   						var logofile = path.join(__dirname, 'cert_resources', 'logo.png');
@@ -361,8 +362,8 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 						var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
 						var outputfile = fs.createWriteStream(outputfilepath);
 						var latexstream = latex(latexStrings).pipe(outputfile);
+						
 						latexstream.on('finish', function(){
-		    		
 		    		
 		    			var message = {
     							from: 'octansosu@gmail.com',
@@ -374,23 +375,26 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
             						filename: 'award.pdf',
             						path: outputfilepath
         							}]};
-  							var smtpTransport = nodemailer.createTransport(
-        						{
-        						service: "gmail",
-        						auth: {
-        							type: "OAuth2",
-            						user         : "octansosu",
-            						clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
-            						clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
-            						refreshToken : "1/fO50uE99BsxSDqyRTutCaqs45f5nNG9cIwzG8vLZ30E"
-            						//accessToken : "ya29.GluYBN_sqLOeg_diZ5-VZTvamNRrh1DQeXLV8gdBDu3XfPCAeoOQrCkhzCPsW68RBOZsMgmM9tOaw0xZ0tJILygemEJyacE2NkgAMbEEnULH3F9mn9Fwwv1DlTdj",
-            						//expires: 3600
-            						}
-        						}
-      						);
+        							
+  						var smtpTransport = nodemailer.createTransport(
+        					{
+        					service: "gmail",
+        					auth: {
+        						
+        						//should move this to a config file
+        						type: "OAuth2",
+            					user         : "octansosu",
+            					clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
+            					clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
+            					refreshToken : "1/fO50uE99BsxSDqyRTutCaqs45f5nNG9cIwzG8vLZ30E"
+            						
+            					//accessToken not needed if refreshToken provided
+            					//accessToken : "ya29.GluYBN_sqLOeg_diZ5-VZTvamNRrh1DQeXLV8gdBDu3XfPCAeoOQrCkhzCPsW68RBOZsMgmM9tOaw0xZ0tJILygemEJyacE2NkgAMbEEnULH3F9mn9Fwwv1DlTdj",
+            					//expires: 3600
+            					}
+        					});
 
-  							smtpTransport.sendMail(message);
-  							
+  						smtpTransport.sendMail(message);
   							
 		    			var file = fs.createReadStream(outputfilepath);
 		    			var stat = fs.statSync(outputfilepath);
@@ -398,6 +402,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		    			res.setHeader('Content-Type', 'application/pdf');
 		    			res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
 		    			file.pipe(res);
+		    			
 		    			file.on('finish', function(){		    			
 							fs.unlinkSync(outputfilepath);
 							fs.unlinkSync(sigfilepath);});
