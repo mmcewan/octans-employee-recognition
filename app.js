@@ -382,9 +382,9 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
             						user         : "octansosu",
             						clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
             						clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
-            						refreshToken : "1/oOFgbdrSB6dcaL_uV3DCSQHBsWGAy9xjySVWCGyAL3M",
-            						accessToken : "ya29.GluYBFzidEOhY04wZ-sC8LcKj5ceyz3abvuEdPfjaucS6aZE7w2XX3Zm05O30fNjeOnbf4CyttVjsH5556RWryLntoLrOOJ89VBX0c-erhloqP2uxiAf0E9j8o72",
-            						expires: 1300}
+            						refreshToken : "1/cvVrbI6H77Tsza-dCmAQr2j1TpfsPv6KskeNsAsyPs8",
+            						accessToken : "ya29.GluYBLVvujzoV3alDP1WEf5mFeLfQtcNqMKPUhR9SZ2RQSu-9jx1GzsDLiA-db3Jmu77zsccwl1KMIfgw09y0twc-qqi8g9S9OFVMwbgHOGCJd04jtkBOrcqJBTI",
+            						expires: 3600}
         						}
       						);
 
