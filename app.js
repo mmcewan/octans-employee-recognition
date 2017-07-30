@@ -378,7 +378,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
         						{
         						service: "gmail",
         						auth: {
-        						type: OAuth2,
+        						type: "OAuth2",
             					user         : "octansosu",
             					clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
             					clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
