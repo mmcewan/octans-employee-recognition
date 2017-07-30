@@ -4,6 +4,6 @@
     "database"  : "rx16grd4pi4ug5yg",
     "user"      : "cbuao2h9z1vrgjwo",
     "password"  : "lhb3ugmby5f0f0my",
-    "connectionLimit": 25,
+    "connectionLimit": 10,
     "idleTimeoutMillis" : 30000
 }
