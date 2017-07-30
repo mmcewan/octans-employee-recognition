@@ -40,7 +40,7 @@ router.get('/report1', function(req,res,next) {
 			}
 		}
 		var context = {num_edu, num_inno, num_ins, num_team, num_ty};
-		res.render('index.pug', context);
+		res.render('report1.pug', context);
 	});
 });
 
