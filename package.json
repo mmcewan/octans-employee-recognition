@@ -27,7 +27,6 @@
     "express": "^4.15.3",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.3",
-    "fs": "0.0.1-security",
     "handlebars": "^4.0.10",
     "latex": "0.0.1",
     "morgan": "^1.0.1",
@@ -36,6 +35,7 @@
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "pdfkit": "^0.8.3",
+    "pug": "^2.0.0-rc.2",
     "requestify": "^0.2.5",
     "xoauth2": "^1.2.0"
   },
