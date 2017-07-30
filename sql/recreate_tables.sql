@@ -59,11 +59,11 @@ INSERT INTO user_profile (username, password, firstname, lastname, email_address
 
 -- Insert statements for award_type table
 INSERT INTO award_type (description) VALUES
-('Educational'),
-('Innovative'),
-('Inspiring'),
+('Education'),
+('Innovation'),
+('Inspiration'),
 ('Teamwork'),
-('Thank you');
+('Appreciation');
 
 -- Insert statements for award table
 INSERT INTO award (sender_id, recepient_id, award_type, comment, award_date) VALUES
