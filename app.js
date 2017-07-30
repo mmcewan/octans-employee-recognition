@@ -374,7 +374,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
     							from: 'octansosu@gmail.com',
    								to: aemail,
     							subject: "Congratulations, you have received an award!",
-    							text: "Congrats, someone has created an award for you through the Octans Employee Recognition System. Please download the attached PDF to view your award."
+    							text: "Congrats, someone has created an award for you through the Octans Employee Recognition System. Please download the attached PDF to view your award.", 
     							attachments: [
         							{
             						filename: 'award.pdf',
