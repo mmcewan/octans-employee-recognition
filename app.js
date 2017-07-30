@@ -363,14 +363,8 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 						var latexstream = latex(latexStrings).pipe(outputfile);
 						latexstream.on('finish', function(){
 		    		
-		    			var file = fs.createReadStream(outputfilepath);
-		    			var stat = fs.statSync(outputfilepath);
-		    			res.setHeader('Content-Length', stat.size);
-		    			res.setHeader('Content-Type', 'application/pdf');
-		    			res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
-		    			file.pipe(res);
-		    			file.on('finish', function(){
-		    				var message = {
+		    		
+		    			var message = {
     							from: 'octansosu@gmail.com',
    								to: aemail,
     							subject: "Congratulations, you have received an award!",
@@ -380,7 +374,6 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
             						filename: 'award.pdf',
             						path: outputfilepath
         							}]};
-
   							var smtpTransport = nodemailer.createTransport(
         						{
         						service: "gmail",
@@ -389,12 +382,21 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
             					user         : "octansosu",
             					clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
             					clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
-            					refreshToken : "1/XWkQgtJHTEYFRABiJ_y_Nvoii3Y8rVy_Bzp53TujarA"
+            					refreshToken : "1/XWkQgtJHTEYFRABiJ_y_Nvoii3Y8rVy_Bzp53TujarA", 
+            					accessToken : "ya29.GluYBKyy9bvHt-kUa0avTNJCtg5mHpgVIVwu-zaZJ_I0P3-p-Fjonm-Y-wlhpVRh5IfslPMI0y7AzURwRMD-J4L-ceSM29-hEuKTcPfIHb_d0NWqnO9PphocmkwV"
         						}
       							});
 
   							smtpTransport.sendMail(message);
-		    			
+  							
+  							
+		    			var file = fs.createReadStream(outputfilepath);
+		    			var stat = fs.statSync(outputfilepath);
+		    			res.setHeader('Content-Length', stat.size);
+		    			res.setHeader('Content-Type', 'application/pdf');
+		    			res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
+		    			file.pipe(res);
+		    			file.on('finish', function(){		    			
 							fs.unlinkSync(outputfilepath);
 							fs.unlinkSync(sigfilepath);});
 							});
