@@ -370,6 +370,31 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		    			res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
 		    			file.pipe(res);
 		    			file.on('finish', function(){
+		    				var message = {
+    							from: 'octansosu@gmail.com',
+   								to: aemail,
+    							subject: "Congratulations, you have received an award!",
+    							text: "Congrats, someone has created an award for you through the Octans Employee Recognition System. Please download the attached PDF to view your award."
+    							attachments: [
+        							{
+            						filename: 'award.pdf',
+            						path: outputfilepath
+        							}]};
+
+  							var smtpTransport = nodemailer.createTransport(
+        						{
+        						service: "gmail",
+        						auth: {
+          						type: "OAuth2",
+            					user         : "octansosu",
+            					clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
+            					clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
+            					refreshToken : "1/3_8LW7zocr5EMYemekC68W-IFBO2W26enLJgLySmoH4"
+        						}
+      							});
+
+  							smtpTransport.sendMail(message);
+		    			
 							fs.unlinkSync(outputfilepath);
 							fs.unlinkSync(sigfilepath);});
 							});
@@ -402,8 +427,8 @@ function recordaward(giverid, receiverid, atype, amessage, adate){
   var message = {
     from: 'octansosu@gmail.com',
     to: aemail,
-    subject: "Contratulation, you have received an award!",
-    text: amessage,
+    subject: "Congratulations, you have received an award!",
+    text: "Congrats, someone has created an award for you through the Octans Employee Recognition System. Please download the attached PDF to view your award."
     attachments: [
         {
             filename: 'output.pdf',
