@@ -378,14 +378,13 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
         						{
         						service: "gmail",
         						auth: {
-          						type: "OAuth2",
+          						XOAuth2: {
             					user         : "octansosu",
             					clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
             					clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
-            					refreshToken : "1/XWkQgtJHTEYFRABiJ_y_Nvoii3Y8rVy_Bzp53TujarA" 
-            					//accessToken : "ya29.GluYBKyy9bvHt-kUa0avTNJCtg5mHpgVIVwu-zaZJ_I0P3-p-Fjonm-Y-wlhpVRh5IfslPMI0y7AzURwRMD-J4L-ceSM29-hEuKTcPfIHb_d0NWqnO9PphocmkwV"
+            					refreshToken : "1/oOFgbdrSB6dcaL_uV3DCSQHBsWGAy9xjySVWCGyAL3M"}
         						}
-      							});
+      						});
 
   							smtpTransport.sendMail(message);
   							
