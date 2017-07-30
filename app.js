@@ -378,15 +378,15 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
         						{
         						service: "gmail",
         						auth: {
-        						type: "OAuth2",
-            					user         : "octansosu",
-            					clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
-            					clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
-            					refreshToken : "1/oOFgbdrSB6dcaL_uV3DCSQHBsWGAy9xjySVWCGyAL3M",
-            					accessToken : "ya29.GluYBFzidEOhY04wZ-sC8LcKj5ceyz3abvuEdPfjaucS6aZE7w2XX3Zm05O30fNjeOnbf4CyttVjsH5556RWryLntoLrOOJ89VBX0c-erhloqP2uxiAf0E9j8o72",
-            					expires: 1300}
+        							type: "OAuth2",
+            						user         : "octansosu",
+            						clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
+            						clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
+            						refreshToken : "1/oOFgbdrSB6dcaL_uV3DCSQHBsWGAy9xjySVWCGyAL3M",
+            						accessToken : "ya29.GluYBFzidEOhY04wZ-sC8LcKj5ceyz3abvuEdPfjaucS6aZE7w2XX3Zm05O30fNjeOnbf4CyttVjsH5556RWryLntoLrOOJ89VBX0c-erhloqP2uxiAf0E9j8o72",
+            						expires: 1300}
         						}
-      						});
+      						);
 
   							smtpTransport.sendMail(message);
   							
