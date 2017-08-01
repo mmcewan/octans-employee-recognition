@@ -70,7 +70,13 @@ app.use('/', admin);
 
 // routes
 app.get('/', function (req, res) {
-  res.render('home.handlebars');
+	if(req.isAuthenticated()){
+		if (user.admin_flag == 'Y')
+   			 res.redirect('/admin');
+      	else
+	      	res.redirect('/account');}
+    else
+		  res.render('home.handlebars');
 });
 
 app.get('/login', function(req, res) {

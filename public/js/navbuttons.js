@@ -10,7 +10,6 @@
           		req.addEventListener("load", function(){
           			if(req.status >= 200 && req.status < 400){
               			var user_status = req.responseText;
-              			console.log(user_status);
               			if(user_status == 'true'){
 			    	        var logoutitem = document.createElement("li"); 
 	            			var logoutlink = document.createElement("a"); 
@@ -18,7 +17,6 @@
 				            logoutlink.href = "/logout";
 				            logoutitem.appendChild(logoutlink);
 				            menu.appendChild(logoutitem);
-				            console.log("appending log out item");
                   			}
               			}
 		            else {
