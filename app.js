@@ -70,7 +70,7 @@ app.use('/', admin);
 
 // routes
 app.get('/', 
-	passport.authenticate('local-login', { failureRedirect : '/login', failureFlash : true }),
+	passport.authenticate('local-login', { failureRedirect : '/', failureFlash : true }),
 	function (req, res) {
 	if(req.isAuthenticated()){
     		var user = JSON.parse(req.user);
