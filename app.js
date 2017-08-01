@@ -152,7 +152,7 @@ app.get('/myawards', isLoggedIn, function (req, res, next) {
   + " inner join award_type atype on atype.id = a.award_type"
   + " where up2.username = '" + req.user + "';";
 
-    pool.query(query, function(err, rows, field) {
+    pool.query(query, function(err, rows, fields) {
       if(err) {
         next(err);
         return;
@@ -175,7 +175,7 @@ app.get('/awardsgiven', isLoggedIn, function (req, res, next) {
   + " inner join award_type atype on atype.id = a.award_type"
   + " where up.username = '" + req.user + "';";
 
-    pool.query(query, function(err, rows, field) {
+    pool.query(query, function(err, rows, fields) {
       if(err) {
         next(err);
         return;
@@ -194,7 +194,7 @@ app.post('/awardsgiven', isLoggedIn, function (req, res, next) {
   var query = "delete from award where id = " + req.body.id + ";";
   console.log(query);
   if (req.body["delete"]) {
-    pool.query(query, function(err, rows, field) {
+    pool.query(query, function(err, rows, fields) {
       if(err) {
         next(err);
         return;
@@ -203,6 +203,47 @@ app.post('/awardsgiven', isLoggedIn, function (req, res, next) {
       res.render('account.handlebars', context);
     })
   }
+});
+
+app.get('/updateProfile', isLoggedIn, function (req, res, next) {
+  var context = {};
+  var query = "select id, username, firstname, lastname, email_address"
+  + " from user_profile"
+  + " where username = '" + req.user + "';";
+
+    pool.query(query, function(err, rows, fields) {
+      if(err) {
+        next(err);
+        return;
+      }
+      context.id = rows[0].id;
+      context.username = rows[0].username;
+      context.firstname = rows[0].firstname;
+      context.lastname = rows[0].lastname;
+      context.email_address = rows[0].email_address;
+      res.render('updateProfile.handlebars', context);
+    })
+});
+
+app.post('/updateProfile', isLoggedIn, function (req, res, next) {
+  var context = {};
+  var query = "update user_profile"
+  + " set firstname = ?, lastname = ?, email_address = ?"
+  + " where id = ? ;";
+
+    pool.query(query, [
+      req.body.firstname,
+      req.body.lastname,
+      req.body.email,
+      req.body.id
+    ], function(err, rows, fields) {
+      if(err) {
+        next(err);
+        return;
+      }
+      context.message = "Your profile has been updated."
+      res.render('account.handlebars', context);
+    })
 });
 
 app.get('/logout', function (req, res) {

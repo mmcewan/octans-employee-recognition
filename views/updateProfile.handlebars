@@ -1,0 +1,30 @@
+<!-- Wrapper -->
+<section id="wrapper">
+  <!-- Registration -->
+    <section id="updateProfile" class="wrapper">
+      <div class="inner">
+        <h2 class="major">Update Your User Profile</h2>
+        <form id="updateProfile" method="post" action="/updateProfile">
+          <div class="field">
+            <input type="hidden" name="id" value={{id}}>
+          </div>
+          <div class="field">
+            <label for="firstname">First Name</label>
+            <input type="text" name="firstname" id="firstname" value="{{firstname}}" />
+          </div>
+          <div class="field">
+            <label for="lastname">Last Name</label>
+            <input type="text" name="lastname" id="lastname" value="{{lastname}}" />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" value="{{email_address}}" required />
+          </div>
+          <ul class="actions">
+            <li><input type="submit" id="updateProfile" value="Save Changes" /></li>
+            <li><a href="/account" class="button login-button">Discard Changes</a></li>
+          </ul>
+        </form>
+      </div>
+    </section>
+</section>
