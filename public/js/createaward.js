@@ -72,13 +72,13 @@
               var response = JSON.parse(req.responseText);
                   
                   for (var i in response){ 
-                    
-                    var a = document.getElementById("areceiver"); 
-                    var b = document.createElement("option"); 
-                    var user_description_text = response[i].firstname + " " + response[i].lastname + " (" + response[i].email_address + ")";
-                    b.text = user_description_text;
-                    b.value = response[i].id;
-                    a.appendChild(b);
+                    if((response[i].email_address) && (response[i].email_address != "")){
+                    	var a = document.getElementById("areceiver"); 
+                    	var b = document.createElement("option"); 
+                    	var user_description_text = response[i].firstname + " " + response[i].lastname + " (" + response[i].email_address + ")";
+                    	b.text = user_description_text;
+                    	b.value = response[i].id;
+                    	a.appendChild(b);}
                   }
               }
             else {
