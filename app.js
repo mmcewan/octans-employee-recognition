@@ -71,10 +71,15 @@ app.use('/', admin);
 // routes
 app.get('/', function (req, res) {
 	if(req.isAuthenticated()){
-		if (user.admin_flag == 'Y')
-   			 res.redirect('/admin');
-      	else
-	      	res.redirect('/account');}
+		passport.authenticate('local-login', { failureRedirect : '/login', failureFlash : true }),
+ 		 function(req, res) {
+    		var user = JSON.parse(req.user);
+    		if (user.admin_flag == 'Y') {
+      		res.redirect('/admin');
+    		}
+    		else {
+     		res.redirect('/account');
+    }}}
     else
 		  res.render('home.handlebars');
 });
