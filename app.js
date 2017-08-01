@@ -69,19 +69,18 @@ var admin = require('./admin');
 app.use('/', admin);
 
 // routes
-app.get('/', function (req, res) {
+app.get('/', 
+	passport.authenticate('local-login', { failureRedirect : '/login', failureFlash : true }),
+	function (req, res) {
 	if(req.isAuthenticated()){
-		passport.authenticate('local', { failureRedirect : '/login', failureFlash : true }),
- 		 function(req, res) {
     		var user = JSON.parse(req.user);
     		if (user.admin_flag == 'Y') {
-      		res.render('/admin');
+      		 res.redirect('/admin');
     		}
     		else {
-     		res.render('/account');
+     		 res.redirect('/account');
     		}
     	}
-    }
     else
 		  res.render('home.handlebars');
 });
