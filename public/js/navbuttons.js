@@ -11,7 +11,7 @@
           			if(req.status >= 200 && req.status < 400){
               			var user_status = req.responseText;
               			console.log(user_status);
-              			if(user_status){
+              			if(user_status === true){
 			    	        var logoutitem = document.createElement("li"); 
 	            			var logoutlink = document.createElement("a"); 
     			        	logoutlink.text = "Log Out";
