@@ -255,6 +255,10 @@ app.get('/session_info', isLoggedIn, function (req, res) {
   res.send(req.user);
 });
 
+app.get('/logged_status', function (req, res) {
+  res.send(req.isAuthenticated());
+});
+
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
   // if user is authenticated, continue
