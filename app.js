@@ -70,17 +70,20 @@ app.use('/', admin);
 
 // routes
 app.get('/', 
-	passport.authenticate('local-login', { failureRedirect : '/', failureFlash : true }),
 	function (req, res) {
 	if(req.isAuthenticated()){
-    		var user = JSON.parse(req.user);
-    		if (user.admin_flag == 'Y') {
+			var adminQueryString = "select admin_flag from user_profile " +
+                    " where username = ?";
+  			pool.query(adminQueryString, [req.user], function(err, dbres) {
+    			var admin_flag = dbres[0].admin_flag;
+    		if (admin_flag == 'Y') {
       		 res.redirect('/admin');
     		}
     		else {
      		 res.redirect('/account');
     		}
-    	}
+    	});
+    }
     else
 		  res.render('home.handlebars');
 });
