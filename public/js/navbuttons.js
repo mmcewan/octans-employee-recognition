@@ -18,6 +18,7 @@
 				            logoutlink.href = "/logout";
 				            logoutitem.appendChild(logoutlink);
 				            menu.appendChild(logoutitem);
+				            console.log("appending log out item");
                   			}
               			}
 		            else {
