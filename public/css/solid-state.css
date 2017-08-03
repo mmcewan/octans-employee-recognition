@@ -1948,7 +1948,8 @@
 		width: 100%;
 	}
 	
-	input[type="date"]{
+	input[type="date"],
+	input[type="time"]{
 	background: rgba(255, 255, 255, 0.025);
 		border-radius: 5px;
 		border: none;
