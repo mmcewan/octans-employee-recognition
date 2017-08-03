@@ -341,8 +341,11 @@ var agiver;
 var areceiver;
 var asignature;
 var amessage = req.body.amessage;
-var adate = getCurrentDate();
 var aemail;
+var adate = getCurrentDate();
+console.log(req.body.adatetime);
+if(req.body.adatetime && req.body.adatetime != ""){
+	adate = req.body.adatetime}
 var atype = req.body.atype;
 var receiverid = req.body.areceiver;
 var giverid = req.user;
