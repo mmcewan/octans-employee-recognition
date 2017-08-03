@@ -351,7 +351,8 @@ var adatetime = adate;
 if(req.body.atime && req.body.atime != ""){
 	atime = req.body.atime;
 	adatetime = adatetime + " " + atime;}
-	
+
+console.log(adatetime);
 var atype = req.body.atype;
 var receiverid = req.body.areceiver;
 var giverid = req.user;
