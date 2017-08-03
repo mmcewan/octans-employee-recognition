@@ -1,9 +1,9 @@
 
-      document.addEventListener('DOMContentLoaded', bindLogInButton);
+      document.addEventListener('DOMContentLoaded', bindAwardButton);
       document.addEventListener('DOMContentLoaded', typedropDown);
       document.addEventListener('DOMContentLoaded', userdropDown);
 
-      function bindLogInButton(){
+      function bindAwardButton(){
         document.getElementById('awardButton').addEventListener('click', function(event){
           event.preventDefault();
           var req = new XMLHttpRequest();
@@ -12,7 +12,8 @@
           payload.areceiver = document.getElementById('areceiver').value;
           payload.amessage = document.getElementById('amessage').value;
           payload.atype = document.getElementById('alist').value;
-          
+          payload.adate = document.getElementById('adate').value;
+          payload.atime = document.getElementById('atime').value;
           
           //found help here: https://stackoverflow.com/questions/12876000/how-to-build-pdf-file-from-binary-string-returned-from-a-web-service-using-javas
           req.open('POST', '/new_award', true);
