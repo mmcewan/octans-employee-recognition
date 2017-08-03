@@ -344,11 +344,14 @@ var amessage = req.body.amessage;
 var aemail;
 var atime;
 var adate = getCurrentDate();
-console.log(req.body.adate);
-console.log(req.body.atime);
 if(req.body.adate && req.body.adate != ""){
 	adate = req.body.adate;
 	}
+var adatetime = adate;
+if(req.body.atime && req.body.atime != ""){
+	atime = req.body.atime;
+	adatetime = adatetime + " " + atime;}
+	
 var atype = req.body.atype;
 var receiverid = req.body.areceiver;
 var giverid = req.user;
@@ -386,7 +389,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		    	{
 		    	aemail = dbres[0].email_address;
 		    	areceiver =  dbres[0].firstname + " " + dbres[0].lastname;
-		    	recordaward(giverid, receiverid, atype, amessage, adate);
+		    	recordaward(giverid, receiverid, atype, amessage, adatetime);
 
 		    	var typequeryString = "select id, description from award_type " +
                     " where id = ?";
