@@ -344,7 +344,7 @@ var amessage = req.body.amessage;
 var aemail;
 var adate = getCurrentDate();
 console.log(req.body.adatetime);
-if(req.body.adatetime && req.body.adatetime != ""){
+if(req.body.adatetime && req.body.adatetime != "0000-00-00T00:00"){
 	adate = req.body.adatetime;
 	}
 var atype = req.body.atype;
