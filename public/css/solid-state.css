@@ -1947,6 +1947,18 @@
 		text-decoration: none;
 		width: 100%;
 	}
+	
+	input[type="date"]{
+	background: rgba(255, 255, 255, 0.025);
+		border-radius: 5px;
+		border: none;
+		border: solid 2px rgba(255, 255, 255, 0.125);
+		color: inherit;
+		display: block;
+		outline: 0;
+		padding: 0 1em;
+		text-decoration: none;}
+	
 
 		input[type="text"]:invalid,
 		input[type="password"]:invalid,
