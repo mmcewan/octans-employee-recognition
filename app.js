@@ -350,7 +350,7 @@ if(req.body.adate && req.body.adate != ""){
 var adatetime = adate;
 if(req.body.atime && req.body.atime != ""){
 	atime = req.body.atime;
-	adatetime = adatetime + " " + atime;}
+	adatetime = adatetime + " " + atime + ":00";}
 
 console.log(adatetime);
 var atype = req.body.atype;
