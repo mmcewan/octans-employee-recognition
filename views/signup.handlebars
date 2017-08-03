@@ -30,17 +30,15 @@
             <label for="email">Email</label>
             <input type="email" name="email" id="email" required />
           </div>
-          <div class="field">
-            <label for="signature">Signature</label>
-            <div id=signature-wrapper>
-              <canvas id="signature" name="signature" class="signature" width=700 height=100></canvas>
-              <button type="button" class="button small signature-footer" id="clearButton">Clear</button>
-            </div>
-            <input type="hidden" name="sigData" id="sigData"/>
+          <label for="signature">Signature</label>
+          <div id=signature-wrapper>
+            <canvas id="signature" name="signature" class="signature" width=700 height=100></canvas>
+            <button type="button" class="button small signature-footer" id="clearButton">Clear</button>
           </div>
+          <input type="hidden" name="sigData" id="sigData"/>
           <ul class="actions">
-            <li><input type="submit" id="complete-registration" value="Complete Registration" /></li>
-            <li><a href="/login" class="button special login-button">Already have an account?</a></li>
+            <li><input class="special" type="submit" id="complete-registration" value="Complete Registration" /></li>
+            <li><a href="/login" class="button login-button">Already have an account?</a></li>
           </ul>
         </form>
       </div>
