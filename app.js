@@ -342,10 +342,12 @@ var areceiver;
 var asignature;
 var amessage = req.body.amessage;
 var aemail;
+var atime;
 var adate = getCurrentDate();
-console.log(req.body.adatetime);
-if(req.body.adatetime && req.body.adatetime != "0000-00-00T00:00"){
-	adate = req.body.adatetime;
+console.log(req.body.adate);
+console.log(req.body.atime);
+if(req.body.adate && req.body.adate != ""){
+	adate = req.body.adate;
 	}
 var atype = req.body.atype;
 var receiverid = req.body.areceiver;
