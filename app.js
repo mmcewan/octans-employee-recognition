@@ -656,9 +656,6 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 });
 
 
-<<<<<<< HEAD
-/* function to record award in database */
-=======
 // generate report
 app.get('/report1', function(req,res,next) {
 	var num_edu = 0, num_inno = 0, num_ins = 0, num_team = 0, num_ty = 0;
@@ -966,7 +963,6 @@ app.post('/admin', function(req,res,next) {
 
 
 /* function to record award in database */	    	
->>>>>>> Merged admin.js into app.js
 function recordaward(giverid, receiverid, atype, amessage, adate){
 
 	var awardinsertqueryString = "insert into award " +
