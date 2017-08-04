@@ -68,10 +68,6 @@ app.use(flash());
 // allow express to use static files in public directory
 app.use(express.static('public'));
 
-// ------Temporary Route for Admin page: No Login Needed------------
-var admin = require('./admin');
-app.use('/', admin);
-
 // routes
 app.get('/',
 	function (req, res) {
@@ -160,6 +156,10 @@ app.post('/signup', function (req, res) {
 
 app.get('/account', isLoggedIn, function (req, res) {
   res.render('account.handlebars');
+});
+
+app.get('/admin', isLoggedIn, function(req,res) {
+  res.render('admin');
 });
 
 app.get('/myawards', isLoggedIn, function (req, res, next) {
@@ -661,7 +661,313 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 });
 
 
-/* function to record award in database */
+// generate report
+app.get('/report1', function(req,res,next) {
+	var num_edu = 0, num_inno = 0, num_ins = 0, num_team = 0, num_ty = 0;
+	
+	q = "SELECT award_type.description FROM `award_type`" +
+		"INNER JOIN `award` ON award.award_type = award_type.id";
+		
+	pool.query(q, function(err, rows, field) {
+		if(err) {
+			next(err);
+			return;
+		}
+		for (var p in rows) {
+			switch(rows[p].description) {
+				case "Education": num_edu++; break;
+				case "Innovation": num_inno++; break;
+				case "Inspiration": num_ins++; break;
+				case "Teamwork": num_team++; break;
+				case "Appreciation": num_ty++; break;
+			}
+		}
+		var data, csv;
+		var award_data = [
+			{"Award Type": "Education", "Amount": num_edu},
+			{"Award Type": "Innovation", "Amount": num_inno},
+			{"Award Type": "Inspiration", "Amount": num_ins},
+			{"Award Type": "Teamwork", "Amount": num_team},
+			{"Award Type": "Appreciation", "Amount": num_ty},
+		];
+		csv = convertArrayToCSV({data: award_data});
+		data = encodeURI(csv);
+		
+		var context = {data, num_edu, num_inno, num_ins, num_team, num_ty};
+		res.render('report1.pug', context);
+	});
+});
+
+// Helper function
+function convertArrayToCSV(args) {
+	var result, ctr, keys, columnDelimiter, lineDelimiter, data;
+
+    data = args.data || null;
+    if (data == null || !data.length) {
+        return null;
+    }
+
+    columnDelimiter = args.columnDelimiter || ',';
+    lineDelimiter = args.lineDelimiter || '\n';
+
+    keys = Object.keys(data[0]);
+
+    result = '';
+    result += keys.join(columnDelimiter);
+    result += lineDelimiter;
+
+    data.forEach(function(item) {
+        ctr = 0;
+        keys.forEach(function(key) {
+            if (ctr > 0) result += columnDelimiter;
+
+            result += item[key];
+            ctr++;
+        });
+        result += lineDelimiter;
+    });
+    return result;
+}
+
+// admin functions
+app.post('/admin', function(req,res,next) {
+	var context = {};
+
+	// Add new user/admin
+	if (req.body["add-new"]) {
+		res.render('admin-new');
+	}
+	
+	// Insert new user to database
+	if (req.body["insert"]) {
+		var hash = bcrypt.hashSync(req.body.password, salt);
+		
+		pool.query("INSERT INTO `user_profile` (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts)" +
+					" VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
+					[req.body.username, hash, req.body.firstname, req.body.lastname, req.body.email, req.body.signature, req.body.admin_flag], 
+					function(err,result){
+			if(err){
+				if (err.code == '23505') {
+					res.status(409);
+					res.send("Username already in use.");
+					console.log(err);
+				}
+				else {
+					res.status(500);
+					res.send("Error! Something broke...");
+					console.log(err);
+				}
+			}	
+			req.flash('message', 'New account created successfully!');
+			res.render('admin', { message: req.flash('message') });
+		});
+	}
+	
+	// Displays accounts for management
+	if (req.body["accounts"]) {
+		pool.query("SELECT * FROM `user_profile`", function(err, rows, field) {
+			if(err) {
+				next(err);
+				return;
+			}
+			context.account = [];
+			for (var p in rows) {
+				context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+									"lastname":rows[p].lastname, "email":rows[p].email_address, 
+									"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+			}
+			res.render('admin', context);
+		});
+	}
+	
+	// Allow admin to edit account information 
+	if (req.body["edit"]) {
+		pool.query("SELECT * FROM `user_profile` WHERE id=?", [req.body.id], function(err, rows, fields) {
+			if(err) {
+				next(err);
+				return;
+			}
+			context.id = rows[0].id;
+			context.username = rows[0].username; 
+			context.firstname = rows[0].firstname;
+			context.lastname = rows[0].lastname;
+			context.email = rows[0].email_address;
+			//context.signature
+			context.admin_flag = rows[0].admin_flag;
+			res.render('admin-update', context);
+		});
+	}
+	
+	// Update the edited account data to database
+	if (req.body["update"]) {
+		var admin_flag = req.body.admin_flag;
+		
+		pool.query("UPDATE `user_profile` SET username=?, firstname=?, lastname=?, email_address=?, admin_flag=? WHERE id=?",
+					[req.body.username, req.body.firstname, req.body.lastname, req.body.email, req.body.admin_flag, req.body.id], 
+					function(err, result) {
+			if(err) {
+				next(err);
+				return;
+			}	
+		req.flash('message', 'Account has been successfully updated!');
+		res.render('admin', { message: req.flash('message') });	
+		});
+	}
+	
+	// Delete account
+	if (req.body["delete"]) {
+		var admin_flag = req.body.admin_flag;
+		
+		pool.query("DELETE FROM `user_profile` WHERE id=?", [req.body.id], function(err, rows, fields) {
+			if(err) {
+				next(err);
+				return;
+			}
+		req.flash('message', 'Account has been successfully deleted!');
+		res.render('admin', { message: req.flash('message') });	
+		});
+	}
+	
+	if (req.body["sortby"]) {
+		var selected = req.body.selectpicker;
+		if (selected == "username") {
+			pool.query("SELECT * FROM `user_profile` ORDER BY username ASC", function(err, rows, field) {
+				if(err) {
+					next(err);
+					return;
+				}
+				context.account = [];
+				for (var p in rows) {
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+				}
+				res.render('admin', context);
+			});
+		}
+		else if (selected == "firstname") {
+			pool.query("SELECT * FROM `user_profile` ORDER BY firstname ASC", function(err, rows, field) {
+				if(err) {
+					next(err);
+					return;
+				}
+				context.account = [];
+				for (var p in rows) {
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+				}
+				res.render('admin', context);
+			});
+		}
+		else if (selected == "lastname") {
+			pool.query("SELECT * FROM `user_profile` ORDER BY lastname ASC", function(err, rows, field) {
+				if(err) {
+					next(err);
+					return;
+				}
+				context.account = [];
+				for (var p in rows) {
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+				}
+				res.render('admin', context);
+			});
+		}
+		else if (selected == "email_address") {
+			pool.query("SELECT * FROM `user_profile` ORDER BY email_address ASC", function(err, rows, field) {
+				if(err) {
+					next(err);
+					return;
+				}
+				context.account = [];
+				for (var p in rows) {
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+				}
+				res.render('admin', context);
+			});
+		}
+		else if (selected == "admin_flag") {
+			pool.query("SELECT * FROM `user_profile` ORDER BY admin_flag ASC", function(err, rows, field) {
+				if(err) {
+					next(err);
+					return;
+				}
+				context.account = [];
+				for (var p in rows) {
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+				}
+				res.render('admin', context);
+			});
+		}
+		else if (selected="creation_time") {
+			pool.query("SELECT * FROM `user_profile` ORDER BY created_ts ASC", function(err, rows, field) {
+				if(err) {
+					next(err);
+					return;
+				}
+				context.account = [];
+				for (var p in rows) {
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+				}
+				res.render('admin', context);
+			});	
+		}
+		else {
+			pool.query("SELECT * FROM `user_profile`", function(err, rows, field) {
+				if(err) {
+					next(err);
+					return;
+				}
+				context.account = [];
+				for (var p in rows) {
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
+										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
+				}
+				res.render('admin', context);
+			});
+		}
+	}
+	
+	
+	if (req.body["reports"]) {
+		var num_users = 0;
+		var num_awards = 0;
+		
+		pool.query("SELECT * FROM `user_profile`", function(err, rows, field) {
+			if(err) {
+				next(err);
+				return;
+			}
+			for (var p in rows) {
+				num_users++;
+			}
+			pool.query("SELECT * FROM `award`", function(err, rows, field) {
+				if(err) {
+					next(err);
+					return;
+				}
+				for (var p in rows) {
+					num_awards++;
+				}
+				context.report = [];
+				context.report.push({"num_users":num_users, "num_awards":num_awards});
+				res.render('admin', context);
+			});
+		});
+	}
+});
+
+
+/* function to record award in database */	    	
 function recordaward(giverid, receiverid, atype, amessage, adate){
 
 	var awardinsertqueryString = "insert into award " +
