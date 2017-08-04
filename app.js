@@ -965,6 +965,7 @@ app.post('/admin', function(req,res,next) {
 		});
 	}
 	
+	//new handler for awardschart submit
 	if (req.body["awardschart"]) {
 		var num_edu = 0, num_inno = 0, num_ins = 0, num_team = 0, num_ty = 0;
 	
