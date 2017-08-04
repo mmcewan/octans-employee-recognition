@@ -342,11 +342,6 @@ var areceiver;
 var asignature;
 var aemail;
 
-
-console.log(atype);
-console.log(receiver);
-
-
 if(!req.body.areceiver || req.body.areceiver == ""){
 	res.status(403);
 	res.send("Please select a valid recipient.");}
