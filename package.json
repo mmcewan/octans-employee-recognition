@@ -17,6 +17,7 @@
     "url": "https://github.com/mmcewan/octans-employee-recognition"
   },
   "dependencies": {
+    "async": "^2.5.0",
     "base64-min": "^2.0.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.17.2",
@@ -24,6 +25,7 @@
     "cloudinary": "^1.9.0",
     "connect-flash": "^0.1.1",
     "cross-spawn": "^5.1.0",
+    "crypto": "0.0.3",
     "express": "^4.15.3",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.3",

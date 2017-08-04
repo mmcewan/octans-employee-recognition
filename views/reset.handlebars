@@ -1,0 +1,28 @@
+<!-- Wrapper -->
+<section id="wrapper">
+  <!-- Login -->
+    <section id="reset" class="wrapper">
+      <div class="inner">
+        <h2 class="major">Reset Password</h2>
+
+        {{#if message}}
+          <div>{{ message }}</div>
+        {{/if}}
+
+        <form method="post">
+          <div class="field">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" required />
+          </div>
+          <div class="field">
+            <label for="confirm-password">Confirm Password</label>
+            <input type="password" name="confirm-password" id="confirm-password" required />
+          </div>
+          <ul class="actions">
+            <li><input class="special" type="submit" value="Update Password" /></li>
+          </ul>
+        </form>
+
+      </div>
+    </section>
+</section>

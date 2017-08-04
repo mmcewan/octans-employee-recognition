@@ -1,0 +1,24 @@
+<!-- Wrapper -->
+<section id="wrapper">
+  <!-- Login -->
+    <section id="forgot" class="wrapper">
+      <div class="inner">
+        <h2 class="major">Forgot Password</h2>
+
+        {{#if message}}
+          <div>{{ message }}</div>
+        {{/if}}
+
+        <form method="post" action="/forgot">
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" required />
+          </div>
+          <ul class="actions">
+            <li><input class="special" type="submit" value="Reset Password" /></li>
+          </ul>
+        </form>
+        
+      </div>
+    </section>
+</section>

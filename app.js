@@ -9,6 +9,10 @@ var path = require('path');
 var fs = require('fs');
 var latex = require('latex');
 
+// packages related to password recovery
+var async = require('async');
+var crypto = require('crypto');
+
 // set up mysql database connection
 var mysql = require('mysql');
 var dbconfig = require('./config/database.json');
@@ -69,7 +73,7 @@ var admin = require('./admin');
 app.use('/', admin);
 
 // routes
-app.get('/', 
+app.get('/',
 	function (req, res) {
 	if(req.isAuthenticated()){
 			var adminQueryString = "select admin_flag from user_profile " +
@@ -261,6 +265,169 @@ app.post('/updateProfile', isLoggedIn, function (req, res, next) {
     })
 });
 
+app.get('/forgot', function(req, res) {
+  res.render('forgot.handlebars', { message: req.flash('message') });
+});
+
+app.post('/forgot', function(req, res, next) {
+  async.waterfall([
+    function(done) {
+      crypto.randomBytes(20, function(err, buf) {
+        var token = buf.toString('hex');
+        done(err, token);
+      });
+    },
+    function(token, done) {
+      var selUser = "select id from user_profile where email_address = ? ;"
+      pool.query(selUser, [ req.body.email ], function(err, rows, fields) {
+        if(err) {
+          next(err);
+          return;
+        }
+        if (!rows.length > 0) {
+          req.flash('message', 'No account with that email address exists.');
+          return res.redirect('/forgot');
+        }
+        var email  = req.body.email;
+        var tokenExpire = Date.now() + 3600000; // 1 hour
+        console.log(tokenExpire);
+
+        var updUser = "update user_profile"
+        + " set resetPasswordToken = ?, resetPasswordExpires = ?"
+        + " where email_address = ? ;"
+
+        pool.query(updUser,[token, tokenExpire, email], function(err, rows, fields) {
+          if(err) {
+            next(err);
+            return;
+          }
+          done(err, token, email);
+        });
+      });
+    },
+    function(token, email, done) {
+      var smtpTransport = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          type: "OAuth2",
+          user: "octansosu",
+          clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
+          clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
+          refreshToken : "1/fO50uE99BsxSDqyRTutCaqs45f5nNG9cIwzG8vLZ30E"
+          //accessToken not needed if refreshToken provided
+          //accessToken : "ya29.GluYBN_sqLOeg_diZ5-VZTvamNRrh1DQeXLV8gdBDu3XfPCAeoOQrCkhzCPsW68RBOZsMgmM9tOaw0xZ0tJILygemEJyacE2NkgAMbEEnULH3F9mn9Fwwv1DlTdj",
+          //expires: 3600
+        }
+      });
+      var msg = {
+        from: 'octansosu@gmail.com',
+        to: email,
+        subject: "Octans Employee Recognition Password Reset",
+        text: "You are receiving this because you (or someone else) has requested the reset of the password for your account.\n\n" +
+          "Please click on the following link to complete the reset process.\n\n" +
+          "http://" + req.headers.host + "/reset/" + token + "\n\n" +
+          "If you did not request this, please ignore this email and your password will remain unchanged.\n"
+      };
+      smtpTransport.sendMail(msg, function(err) {
+        req.flash('message', 'An e-mail has been sent to ' + email + ' with further instructions.');
+        done(err, 'done');
+      });
+
+    }
+  ], function(err) {
+    if(err) {
+      return next(err);
+    }
+    res.redirect('/forgot');
+  });
+});
+
+app.get('/reset/:token', function(req, res) {
+  var query = "select username from user_profile where resetPasswordToken = ? and resetPasswordExpires > ? ;"
+  var token = req.params.token;
+  var tokenExpire = Date.now();
+  pool.query(query,[token, tokenExpire], function(err, rows, fields) {
+    if(err) {
+      next(err);
+      return;
+    }
+    if (!rows.length > 0) {
+      req.flash('message', 'Password reset token is invalid or has expired.');
+      return res.redirect('/forgot');
+    }
+    res.render('reset.handlebars');
+  });
+});
+
+app.post('/reset/:token', function(req, res, next) {
+  async.waterfall([
+    function(done) {
+      var query = "select username, email_address from user_profile where resetPasswordToken = ? and resetPasswordExpires > ? ;"
+      var token = req.params.token;
+      var tokenExpire = Date.now();
+      pool.query(query,[token, tokenExpire], function(err, rows, fields) {
+        if(err) {
+          next(err);
+          return;
+        }
+        if (!rows.length > 0) {
+          req.flash('message', 'Password reset token is invalid or has expired.');
+          return res.redirect('back');
+        }
+        var username = rows[0].username;
+        var email = rows[0].email_address;
+        // generate random salt & hash new password
+        var salt = bcrypt.genSaltSync(10);
+        var hash = bcrypt.hashSync(req.body.password, salt);
+        done(err, username, email, hash);
+      });
+    },
+    function(username, email, hash, done) {
+        console.log()
+        var updPwd = "update user_profile"
+        + " set password = ?, resetPasswordToken = NULL, resetPasswordExpires = NULL"
+        + " where username = ? ;"
+        pool.query(updPwd,[hash, username], function(err, rows, fields) {
+          if(err) {
+            next(err);
+            return;
+          }
+          done(err, email);
+        });
+    },
+    function(email, done) {
+      var smtpTransport = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          type: "OAuth2",
+          user: "octansosu",
+          clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
+          clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
+          refreshToken : "1/fO50uE99BsxSDqyRTutCaqs45f5nNG9cIwzG8vLZ30E"
+          //accessToken not needed if refreshToken provided
+          //accessToken : "ya29.GluYBN_sqLOeg_diZ5-VZTvamNRrh1DQeXLV8gdBDu3XfPCAeoOQrCkhzCPsW68RBOZsMgmM9tOaw0xZ0tJILygemEJyacE2NkgAMbEEnULH3F9mn9Fwwv1DlTdj",
+          //expires: 3600
+        }
+      });
+      var msg = {
+        from: 'octansosu@gmail.com',
+        to: email,
+        subject: "Octans Employee Recognition Password Has Been Changed",
+        text: "This email confirms that the password for " + email + "has just been changed.\n\n"
+      };
+      smtpTransport.sendMail(msg, function(err) {
+        req.flash('message', 'Success! Your password has been changed.');
+        done(err, 'done');
+      });
+    }
+  ], function(err) {
+    if(err) {
+      return next(err);
+    }
+    res.redirect('/login');
+  });
+});
+
 app.get('/logout', function (req, res) {
   req.logout();
   res.redirect('/');
@@ -374,7 +541,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
     	asignature = dbres[0].signature;
     	agiver = dbres[0].firstname + " " + dbres[0].lastname;
     	giverid = dbres[0].id;
-    	
+
     	var receiverqueryString = "select id, email_address, firstname, lastname from user_profile " +
                     " where id = ?";
   		pool.query(receiverqueryString, [receiverid], function(err, dbres) {
@@ -408,14 +575,14 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		    	else
 		    		{
 		    		var typename = dbres[0].description;
-		    		
+
 		    		//get image from cloudinary data store with this http call, based on this thread: https://stackoverflow.com/questions/11944932/how-to-download-a-file-with-node-js-without-using-third-party-libraries
 		    		var http = require('http');
 		    		var sigfilepath = path.join(__dirname, 'cert_resources', 'file.jpg');
 		    		var file = fs.createWriteStream(sigfilepath);
-		    		
+
 					var get_cloud_image = http.get(asignature, function(response) {
-					
+
   						response.pipe(file);
   						var backgroundfile = path.join(__dirname, 'cert_resources', 'background1.jpg');
   						var logofile = path.join(__dirname, 'cert_resources', 'logo.png');
@@ -433,32 +600,32 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 						var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
 						var outputfile = fs.createWriteStream(outputfilepath);
 						var latexstream = latex(latexStrings).pipe(outputfile);
-						
+
 						latexstream.on('finish', function(){
-		    		
+
 		    			var message = {
     							from: 'octansosu@gmail.com',
    								to: aemail,
     							subject: "Congratulations, you have received an award!",
-    							text: "Congrats, someone has created an award for you through the Octans Employee Recognition System. Please download the attached PDF to view your award.", 
+    							text: "Congrats, someone has created an award for you through the Octans Employee Recognition System. Please download the attached PDF to view your award.",
     							attachments: [
         							{
             						filename: 'award.pdf',
             						path: outputfilepath
         							}]};
-        							
+
   						var smtpTransport = nodemailer.createTransport(
         					{
         					service: "gmail",
         					auth: {
-        						
+
         						//should move this to a config file
         						type: "OAuth2",
             					user         : "octansosu",
             					clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
             					clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
             					refreshToken : "1/fO50uE99BsxSDqyRTutCaqs45f5nNG9cIwzG8vLZ30E"
-            						
+
             					//accessToken not needed if refreshToken provided
             					//accessToken : "ya29.GluYBN_sqLOeg_diZ5-VZTvamNRrh1DQeXLV8gdBDu3XfPCAeoOQrCkhzCPsW68RBOZsMgmM9tOaw0xZ0tJILygemEJyacE2NkgAMbEEnULH3F9mn9Fwwv1DlTdj",
             					//expires: 3600
@@ -466,36 +633,36 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
         					});
 
   						smtpTransport.sendMail(message);
-  							
+
 		    			var file = fs.createReadStream(outputfilepath);
 		    			var stat = fs.statSync(outputfilepath);
 		    			res.setHeader('Content-Length', stat.size);
 		    			res.setHeader('Content-Type', 'application/pdf');
 		    			res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
 		    			file.pipe(res);
-		    			
-		    			file.on('finish', function(){		    			
+
+		    			file.on('finish', function(){
 							fs.unlinkSync(outputfilepath);
 							fs.unlinkSync(sigfilepath);});
 							});
-							
+
 							});
 						}
 					});
 		    	}
-			});	
+			});
 		}
 	});
 });
 
 
-/* function to record award in database */	    	
+/* function to record award in database */
 function recordaward(giverid, receiverid, atype, amessage, adate){
 
 	var awardinsertqueryString = "insert into award " +
     	"(sender_id, recepient_id, award_type, comment, award_date)" +
 	    " values ( ?, ?, ?, ?, ?);";
-    
+
   		pool.query(awardinsertqueryString, [giverid, receiverid, atype, amessage, adate], function(err, dbres) {
     		if (err)  {
 	      		console.log(err);
@@ -513,11 +680,11 @@ function recordaward(giverid, receiverid, atype, amessage, adate){
 
 		if(dd<10) {
     		dd = '0'+dd
-			} 
+			}
 
 		if(mm<10) {
     		mm = '0'+mm
-			} 
+			}
 
 		today = yyyy + '.' + mm  + '.' + dd;
 		return today;
