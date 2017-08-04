@@ -562,7 +562,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 
 		    	var typequeryString = "select id, description from award_type " +
                     " where id = ?";
-  			    		pool.query(typequeryString, [atype], function(err, dbres) {
+  			    pool.query(typequeryString, [atype], function(err, dbres) {
 		    	if (err)  {
 		    		res.status(500);
 		    		res.send("SERVER ERROR");
