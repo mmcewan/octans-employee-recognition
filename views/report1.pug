@@ -5,7 +5,9 @@ html
 		
 	body
 		canvas(id="myChart" width="600" height="500")
-
+		a(href="data:text/csv;charset=utf-8," + data download="report1.csv") Download Report
+		
+		
 		script. 
 			window.onload = function() {
 			var edu="#{num_edu}", inno="#{num_inno}", ins="#{num_ins}", team="#{num_team}", ty="#{num_ty}";

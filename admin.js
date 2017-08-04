@@ -19,7 +19,6 @@ router.get('/admin', function(req,res,next) {
 });
 
 router.get('/report1', function(req,res,next) {
-	//var context = {};
 	var num_edu = 0, num_inno = 0, num_ins = 0, num_team = 0, num_ty = 0;
 	
 	q = "SELECT award_type.description FROM `award_type`" +
@@ -39,11 +38,47 @@ router.get('/report1', function(req,res,next) {
 				case "Thank you": num_ty++; break;
 			}
 		}
-		var context = {num_edu, num_inno, num_ins, num_team, num_ty};
+		var data, csv;
+		var award_data = [
+			{"Award Type": "Educational", "Amount": num_edu},
+			{"Award Type": "Innovative", "Amount": num_inno},
+			{"Award Type": "Inspiring", "Amount": num_ins},
+			{"Award Type": "Teamwork", "Amount": num_team},
+			{"Award Type": "Thank you", "Amount": num_ty},
+		];
+		csv = convertArrayToCSV({data: award_data});
+		data = encodeURI(csv);
+		
+		var context = {data, num_edu, num_inno, num_ins, num_team, num_ty};
 		res.render('report1.pug', context);
 	});
 });
 
+// Helper function
+function convertArrayToCSV(args) {
+	var result, ctr, keys, columnDelimiter, lineDelimiter, data;
+
+    columnDelimiter = args.columnDelimiter || ',';
+    lineDelimiter = args.lineDelimiter || '\n';
+
+    keys = Object.keys(data[0]);
+
+    result = '';
+    result += keys.join(columnDelimiter);
+    result += lineDelimiter;
+
+    data.forEach(function(item) {
+        ctr = 0;
+        keys.forEach(function(key) {
+            if (ctr > 0) result += columnDelimiter;
+
+            result += item[key];
+            ctr++;
+        });
+        result += lineDelimiter;
+    });
+    return result;
+}
 
 router.post('/admin', function(req,res,next) {
 	var context = {};
