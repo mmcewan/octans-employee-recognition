@@ -114,8 +114,6 @@ app.post('/signup', function (req, res) {
   var salt = bcrypt.genSaltSync(10);
   // hash password
   var hash = bcrypt.hashSync(req.body.password, salt);
-  // set admin flag to "N" (not admin) by default
-  var adminFlag = "N";
 
   cloudinary.uploader.upload(req.body.sigData, function(result) {
     console.log(result);
@@ -134,7 +132,7 @@ app.post('/signup', function (req, res) {
     req.body.lastname,
     req.body.email,
     cloudinary.url(req.body.username),
-    adminFlag
+    req.body.admin_flag
   ], function(err, dbres) {
     if (err) {
       if (err.code == '23505') {
@@ -158,7 +156,8 @@ app.get('/account', isLoggedIn, function (req, res) {
   res.render('account.handlebars');
 });
 
-app.get('/admin', isLoggedIn, function(req,res) {
+// isLoggedIn,
+app.get('/admin', function(req,res) {
   res.render('admin');
 });
 
