@@ -1,6 +1,6 @@
 
 
-    document.addEventListener('DOMContentLoaded', createChart);
+document.addEventListener('DOMContentLoaded', createChart);
 
 //create award chart
       function createChart(){
