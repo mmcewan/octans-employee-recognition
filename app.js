@@ -70,7 +70,7 @@ app.use(express.static('public'));
 
 // ------Temporary Route for Admin page: No Login Needed------------
 var admin = require('./admin');
-//app.use('/', admin);
+app.use('/', admin);
 
 // routes
 app.get('/',
