@@ -40,7 +40,7 @@ router.get('/report1', function(req,res,next) {
 			}
 		}
 		var context = {num_edu, num_inno, num_ins, num_team, num_ty};
-		res.render('index.pug', context);
+		res.render('report1.pug', context);
 	});
 });
 
@@ -123,21 +123,9 @@ router.post('/admin', function(req,res,next) {
 			if(err) {
 				next(err);
 				return;
-			}		
-		});
-		// Does not reflect update on the screen as soon as I wanted
-		pool.query("SELECT * FROM `user_profile`", function(err, rows, field) {
-			if(err) {
-				next(err);
-				return;
-			}
-			context.account = [];
-			for (var p in rows) {
-				context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-									"lastname":rows[p].lastname, "email":rows[p].email_address, 
-									"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
-			}
-			res.render('admin', context);
+			}	
+		req.flash('message', 'Account has been successfully updated!');
+		res.render('admin', { message: req.flash('message') });	
 		});
 	}
 	
@@ -150,20 +138,8 @@ router.post('/admin', function(req,res,next) {
 				next(err);
 				return;
 			}
-		});
-		// Does not reflect update on the screen as soon as I wanted
-		pool.query("SELECT * FROM `user_profile`", function(err, rows, field) {
-			if(err) {
-				next(err);
-				return;
-			}
-			context.account = [];
-			for (var p in rows) {
-				context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-									"lastname":rows[p].lastname, "email":rows[p].email_address, 
-									"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
-			}
-			res.render('admin', context);
+		req.flash('message', 'Account has been successfully deleted!');
+		res.render('admin', { message: req.flash('message') });	
 		});
 	}
 	
