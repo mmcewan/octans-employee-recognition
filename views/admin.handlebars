@@ -69,9 +69,11 @@
 </table>
 {{/if}}
 
-
+  {{!-- possible way to put chart into admin page --}}
 {{#if data}}
+<div id="canvas-container">
 <canvas id="myChart" width="600" height="500"></canvas>
+</div>
 <a href="data:text/csv;charset=utf-8,{{data}}" download="report1.csv">Download report as CSV</a>
 	<form>
 	<input type="hidden" id="num_edu" name="num_edu" value="{{num_edu}}">

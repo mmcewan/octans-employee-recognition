@@ -694,7 +694,7 @@ app.get('/report1', function(req,res,next) {
 		data = encodeURI(csv);
 		
 		var context = {data, num_edu, num_inno, num_ins, num_team, num_ty};
-		res.render('admin', context);
+		res.render('admin', context); //replace admin1 with report1.pug to restore pug template version
 	});
 });
 
