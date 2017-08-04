@@ -21,17 +21,23 @@
           req.setRequestHeader('Content-Type', 'application/json');
           req.addEventListener('load', function(){
           		if (this.status === 200) {
-          		// `blob` response
-          		console.log(this.response);
-          		// create `objectURL` of `this.response` : `.pdf` as `Blob`
-          		var file = window.URL.createObjectURL(this.response);
-          		var a = document.createElement("a");
-          		a.href = file;
-          		a.download = this.response.name || "awardPDF";
-          		document.body.appendChild(a);
-          		a.click();
-          		document.body.removeChild(a);
-        	}});
+          			// `blob` response
+          			// create `objectURL` of `this.response` : `.pdf` as `Blob`
+          			var file = window.URL.createObjectURL(this.response);
+          			var a = document.createElement("a");
+          			a.href = file;
+          			a.download = this.response.name || "awardPDF";
+          			document.body.appendChild(a);
+          			a.click();
+          			document.body.removeChild(a);
+        			}
+        		else if(this.status == 403) {
+        			var awardstatusline = document.getElementById('awardResult');
+        			awardstatusline.innerText = this.response;}
+        		else if(this.status == 404) {
+        			var awardstatusline = document.getElementById('awardResult');
+        			awardstatusline.innerText = this.response;}
+        	});
           req.send(JSON.stringify(payload));  
         }); 
       }

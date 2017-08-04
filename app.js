@@ -340,8 +340,20 @@ app.post('/new_award', isLoggedIn, function(req, res, next) {
 var agiver;
 var areceiver;
 var asignature;
-var amessage = req.body.amessage;
 var aemail;
+
+
+console.log(atype);
+console.log(receiver);
+
+
+if(!req.body.areceiver || req.body.areceiver == ""){
+	res.status(403);
+	res.send("Please select a valid recipient.");}
+if(!req.body.atype || req.body.atype == ""){
+	res.status(404);
+	res.send("Please select a valid award type.");}
+
 var atime;
 var adate = getCurrentDate();
 if(req.body.adate && req.body.adate != ""){
@@ -351,8 +363,9 @@ var adatetime = adate;
 if(req.body.atime && req.body.atime != ""){
 	atime = req.body.atime;
 	adatetime = adatetime + " " + atime + ":00";}
+	
+var amessage = req.body.amessage;
 
-console.log(adatetime);
 var atype = req.body.atype;
 var receiverid = req.body.areceiver;
 var giverid = req.user;
