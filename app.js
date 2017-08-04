@@ -670,20 +670,20 @@ app.get('/report1', function(req,res,next) {
 		}
 		for (var p in rows) {
 			switch(rows[p].description) {
-				case "Educational": num_edu++; break;
-				case "Innovative": num_inno++; break;
-				case "Inspiring": num_ins++; break;
+				case "Education": num_edu++; break;
+				case "Innovation": num_inno++; break;
+				case "Inspiration": num_ins++; break;
 				case "Teamwork": num_team++; break;
-				case "Thank you": num_ty++; break;
+				case "Appreciation": num_ty++; break;
 			}
 		}
 		var data, csv;
 		var award_data = [
-			{"Award Type": "Educational", "Amount": num_edu},
-			{"Award Type": "Innovative", "Amount": num_inno},
-			{"Award Type": "Inspiring", "Amount": num_ins},
+			{"Award Type": "Education", "Amount": num_edu},
+			{"Award Type": "Innovation", "Amount": num_inno},
+			{"Award Type": "Inspiration", "Amount": num_ins},
 			{"Award Type": "Teamwork", "Amount": num_team},
-			{"Award Type": "Thank you", "Amount": num_ty},
+			{"Award Type": "Appreciation", "Amount": num_ty},
 		];
 		csv = convertArrayToCSV({data: award_data});
 		data = encodeURI(csv);
