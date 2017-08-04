@@ -342,13 +342,6 @@ var areceiver;
 var asignature;
 var aemail;
 
-if(!req.body.areceiver || req.body.areceiver == ""){
-	res.status(403);
-	res.send("Please select a valid recipient.");}
-if(!req.body.atype || req.body.atype == ""){
-	res.status(404);
-	res.send("Please select a valid award type.");}
-
 var atime;
 var adate = getCurrentDate();
 if(req.body.adate && req.body.adate != ""){

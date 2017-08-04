@@ -9,11 +9,21 @@
           var req = new XMLHttpRequest();
           var payload = {agiver:null, areceiver:null, atitle:null, amessage:null, adate:null, aemail:null, atype:null};
           
-          payload.areceiver = document.getElementById('areceiver').value;
+          var awardstatusline = document.getElementById('awardResult');
+          awardstatusline.innerText = "";
+          
+          payload.areceiver = document.getElementById('areceiver').value;          	
           payload.amessage = document.getElementById('amessage').value;
           payload.atype = document.getElementById('alist').value;
           payload.adate = document.getElementById('adate').value;
           payload.atime = document.getElementById('atime').value;
+          
+        	if(payload.areceiver == ""){
+          		awardstatusline.innerText = "Please select an award recipient from the list.";
+          		return;}
+          	else if(payload.atype == ""){
+          		awardstatusline.innerText = "Please select an award type from the list.";
+          	return;}
           
           //found help here: https://stackoverflow.com/questions/12876000/how-to-build-pdf-file-from-binary-string-returned-from-a-web-service-using-javas
           req.open('POST', '/new_award', true);
