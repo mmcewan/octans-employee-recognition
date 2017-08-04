@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', createChart);
             var num_ins = document.getElementById("num_ins"); 
             var num_team = document.getElementById("num_team"); 
             var num_ty = document.getElementById("num_ty");
+            
+            var canvas = document.getElementsByTagName('canvas')[0];
+			canvas.width  = $(window).width(); 
 			
 			var edu=num_edu.value, inno=num_inno.value, ins=num_ins.value, team=num_team.value, ty=num_ty.value;
 			var ctx = document.getElementById("myChart").getContext('2d');
