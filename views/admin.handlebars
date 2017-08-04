@@ -68,3 +68,22 @@
 	{{/each}}
 </table>
 {{/if}}
+
+
+{{#if data}}
+<canvas id="myChart" width="600" height="500"></canvas>
+<a href="data:text/csv;charset=utf-8,{{data}}" download="report1.csv">Download report as CSV</a>
+	<form>
+	<input type="hidden" id="num_edu" name="num_edu" value="{{num_edu}}">
+	<input type="hidden" id="num_inno" name="num_inno" value="{{num_inno}}">
+	<input type="hidden" id="num_ins" name="num_ins" value="{{num_ins}}">
+	<input type="hidden" id="num_team" name="num_team" value="{{num_team}}">
+	<input type="hidden" id="num_ty" name="num_ty" value="{{num_ty}}">
+	</form>
+
+<script src="./js/https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+<script src="./js/showawarddata.js"></script>
+{{/if}}
+
+
+
