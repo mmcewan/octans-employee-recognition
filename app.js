@@ -694,7 +694,7 @@ app.get('/report1', function(req,res,next) {
 		data = encodeURI(csv);
 		
 		var context = {data, num_edu, num_inno, num_ins, num_team, num_ty};
-		res.render('admin', context); //replace admin1 with report1.pug to restore pug template version
+		res.render('admin', context);
 	});
 });
 
@@ -709,7 +709,6 @@ function convertArrayToCSV(args) {
 
     columnDelimiter = args.columnDelimiter || ',';
     lineDelimiter = args.lineDelimiter || '\n';
-
     keys = Object.keys(data[0]);
 
     result = '';
@@ -720,7 +719,6 @@ function convertArrayToCSV(args) {
         ctr = 0;
         keys.forEach(function(key) {
             if (ctr > 0) result += columnDelimiter;
-
             result += item[key];
             ctr++;
         });
