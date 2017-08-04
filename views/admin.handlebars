@@ -22,7 +22,9 @@
 			<button type="button" class="report_btn" disabled>{{this.num_awards}} awards</button><br/><br/>
 			
 			<h3>Charts</h3>
-			<a href="/report1" class="button" target="_blank">Types of Awards Created</a>
+			<form method="post">
+				<input type="submit" name="awardschart" value="Types of Awards Created"></form>
+			{{!-- <a href="/report1" class="button" target="_blank">Types of Awards Created</a>  Remove comment and delete line above to restore --}}
 		</div>
 	{{/each}}
 {{/if}}

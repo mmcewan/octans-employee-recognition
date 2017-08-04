@@ -964,6 +964,41 @@ app.post('/admin', function(req,res,next) {
 			});
 		});
 	}
+	
+	if (req.body["awardschart"]) {
+		var num_edu = 0, num_inno = 0, num_ins = 0, num_team = 0, num_ty = 0;
+	
+		q = "SELECT award_type.description FROM `award_type`" +
+			"INNER JOIN `award` ON award.award_type = award_type.id";
+		
+		pool.query(q, function(err, rows, field) {
+			if(err) {
+				next(err);
+				return;
+			}
+			for (var p in rows) {
+				switch(rows[p].description) {
+					case "Education": num_edu++; break;
+					case "Innovation": num_inno++; break;
+					case "Inspiration": num_ins++; break;
+					case "Teamwork": num_team++; break;
+					case "Appreciation": num_ty++; break;
+				}
+			}
+			var data, csv;
+			var award_data = [
+				{"Award Type": "Education", "Amount": num_edu},
+				{"Award Type": "Innovation", "Amount": num_inno},
+				{"Award Type": "Inspiration", "Amount": num_ins},
+				{"Award Type": "Teamwork", "Amount": num_team},
+				{"Award Type": "Appreciation", "Amount": num_ty},
+			];
+			csv = convertArrayToCSV({data: award_data});
+			data = encodeURI(csv);
+		
+			var context = {data, num_edu, num_inno, num_ins, num_team, num_ty};
+			res.render('admin', context); //replace admin1 with report1.pug to restore pug template version
+	}
 });
 
 
