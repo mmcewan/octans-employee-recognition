@@ -4,7 +4,7 @@
     <section id="account" class="wrapper">
         <div class="inner">
 			<h2 class="major">Admin Page</h2>
-			
+
 			<ul class="actions">
 			<form method="post">
 				<li><input type="submit" name="add-new" value="Add New Account"></li>
@@ -22,7 +22,7 @@
 					<h3>Statistics</h3>
 					<button type="button" class="report_btn" disabled>{{this.num_users}} accounts</button>
 					<button type="button" class="report_btn" disabled>{{this.num_awards}} awards</button><br/><br/>
-						
+
 					<h3>Charts</h3>
 					<form method="post">
 						<input type="submit" name="awardschart" value="Types of Awards Created"></form>
@@ -46,7 +46,7 @@
 			<script src="./js/showawarddata.js"></script>
 			{{/if}}
 		</div>
-		
+
 		{{#if account}}
 		<table>
 			<tr>
@@ -83,13 +83,12 @@
 				<form method="post"><td>
 					<input type="submit" name="delete" value="Delete">
 					<input type="hidden" name="id" value="{{this.id}}">
+          <input type ="hidden" name="username" value="{{this.username}}">
 				</td></form>
 			</tr>
 			{{/each}}
 		</table>
 		{{/if}}
-	
+
 	</section>
 </section>
-
-

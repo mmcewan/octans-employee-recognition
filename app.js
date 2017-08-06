@@ -118,7 +118,7 @@ app.post('/signup', function (req, res) {
   cloudinary.uploader.upload(req.body.sigData, function(result) {
     console.log(result);
   }, { public_id: req.body.username });
-  
+
   // set admin flag to "N" (not admin) by default
   var adminFlag = "N";
 
@@ -519,7 +519,7 @@ var adatetime = adate;
 if(req.body.atime && req.body.atime != ""){
 	atime = req.body.atime;
 	adatetime = adatetime + " " + atime + ":00";}
-	
+
 var amessage = req.body.amessage;
 
 var atype = req.body.atype;
@@ -581,7 +581,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		    		var http = require('http');
 		    		var sigfilepath = path.join(__dirname, 'cert_resources', 'file.jpg');
 		    		var sigfile = fs.createWriteStream(sigfilepath);
-		    		
+
 					sigfile.on('open', function(){
 
 						var get_cloud_image = http.get(asignature, function(response) {
@@ -603,7 +603,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 							var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
 							var outputfile = fs.createWriteStream(outputfilepath);
 							outputfile.on('open', function(){
-						
+
 								var latexstream = latex(latexStrings).pipe(outputfile);
 
 								latexstream.on('finish', function(){
@@ -652,7 +652,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 									});
 								});
 							});
-						});	
+						});
 					}
 				});
 		    }
@@ -665,10 +665,10 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 // generate report
 app.get('/report1', function(req,res,next) {
 	var num_edu = 0, num_inno = 0, num_ins = 0, num_team = 0, num_ty = 0;
-	
+
 	q = "SELECT award_type.description FROM `award_type`" +
 		"INNER JOIN `award` ON award.award_type = award_type.id";
-		
+
 	pool.query(q, function(err, rows, field) {
 		if(err) {
 			next(err);
@@ -693,7 +693,7 @@ app.get('/report1', function(req,res,next) {
 		];
 		csv = convertArrayToCSV({data: award_data});
 		data = encodeURI(csv);
-		
+
 		var context = {data, num_edu, num_inno, num_ins, num_team, num_ty};
 		res.render('admin', context);
 	});
@@ -736,14 +736,14 @@ app.post('/admin', function(req,res,next) {
 	if (req.body["add-new"]) {
 		res.render('admin-new');
 	}
-	
+
 	// Insert new user to database
 	if (req.body["insert"]) {
 		var hash = bcrypt.hashSync(req.body.password, salt);
-		
+
 		pool.query("INSERT INTO `user_profile` (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts)" +
 					" VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
-					[req.body.username, hash, req.body.firstname, req.body.lastname, req.body.email, req.body.signature, req.body.admin_flag], 
+					[req.body.username, hash, req.body.firstname, req.body.lastname, req.body.email, req.body.signature, req.body.admin_flag],
 					function(err,result){
 			if(err){
 				if (err.code == '23505') {
@@ -756,12 +756,12 @@ app.post('/admin', function(req,res,next) {
 					res.send("Error! Something broke...");
 					console.log(err);
 				}
-			}	
+			}
 			req.flash('message', 'New account created successfully!');
 			res.render('admin', { message: req.flash('message') });
 		});
 	}
-	
+
 	// Displays accounts for management
 	if (req.body["accounts"]) {
 		pool.query("SELECT * FROM `user_profile`", function(err, rows, field) {
@@ -771,15 +771,15 @@ app.post('/admin', function(req,res,next) {
 			}
 			context.account = [];
 			for (var p in rows) {
-				context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-									"lastname":rows[p].lastname, "email":rows[p].email_address, 
+				context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname,
+									"lastname":rows[p].lastname, "email":rows[p].email_address,
 									"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 			}
 			res.render('admin', context);
 		});
 	}
-	
-	// Allow admin to edit account information 
+
+	// Allow admin to edit account information
 	if (req.body["edit"]) {
 		pool.query("SELECT * FROM `user_profile` WHERE id=?", [req.body.id], function(err, rows, fields) {
 			if(err) {
@@ -787,7 +787,7 @@ app.post('/admin', function(req,res,next) {
 				return;
 			}
 			context.id = rows[0].id;
-			context.username = rows[0].username; 
+			context.username = rows[0].username;
 			context.firstname = rows[0].firstname;
 			context.lastname = rows[0].lastname;
 			context.email = rows[0].email_address;
@@ -796,37 +796,42 @@ app.post('/admin', function(req,res,next) {
 			res.render('admin-update', context);
 		});
 	}
-	
+
 	// Update the edited account data to database
 	if (req.body["update"]) {
 		var admin_flag = req.body.admin_flag;
-		
+
 		pool.query("UPDATE `user_profile` SET username=?, firstname=?, lastname=?, email_address=?, admin_flag=? WHERE id=?",
-					[req.body.username, req.body.firstname, req.body.lastname, req.body.email, req.body.admin_flag, req.body.id], 
+					[req.body.username, req.body.firstname, req.body.lastname, req.body.email, req.body.admin_flag, req.body.id],
 					function(err, result) {
 			if(err) {
 				next(err);
 				return;
-			}	
+			}
 		req.flash('message', 'Account has been successfully updated!');
-		res.render('admin', { message: req.flash('message') });	
+		res.render('admin', { message: req.flash('message') });
 		});
 	}
-	
+
 	// Delete account
 	if (req.body["delete"]) {
 		var admin_flag = req.body.admin_flag;
-		
+        console.log("Username = " + req.body.username);
+
 		pool.query("DELETE FROM `user_profile` WHERE id=?", [req.body.id], function(err, rows, fields) {
 			if(err) {
 				next(err);
 				return;
 			}
+
+    cloudinary.uploader.destroy(req.body.username, function(result) {
+      console.log(result);
+    });
 		req.flash('message', 'Account has been successfully deleted!');
-		res.render('admin', { message: req.flash('message') });	
+		res.render('admin', { message: req.flash('message') });
 		});
 	}
-	
+
 	if (req.body["sortby"]) {
 		var selected = req.body.selectpicker;
 		if (selected == "username") {
@@ -837,8 +842,8 @@ app.post('/admin', function(req,res,next) {
 				}
 				context.account = [];
 				for (var p in rows) {
-					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname,
+										"lastname":rows[p].lastname, "email":rows[p].email_address,
 										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 				}
 				res.render('admin', context);
@@ -852,8 +857,8 @@ app.post('/admin', function(req,res,next) {
 				}
 				context.account = [];
 				for (var p in rows) {
-					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname,
+										"lastname":rows[p].lastname, "email":rows[p].email_address,
 										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 				}
 				res.render('admin', context);
@@ -867,8 +872,8 @@ app.post('/admin', function(req,res,next) {
 				}
 				context.account = [];
 				for (var p in rows) {
-					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname,
+										"lastname":rows[p].lastname, "email":rows[p].email_address,
 										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 				}
 				res.render('admin', context);
@@ -882,8 +887,8 @@ app.post('/admin', function(req,res,next) {
 				}
 				context.account = [];
 				for (var p in rows) {
-					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname,
+										"lastname":rows[p].lastname, "email":rows[p].email_address,
 										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 				}
 				res.render('admin', context);
@@ -897,8 +902,8 @@ app.post('/admin', function(req,res,next) {
 				}
 				context.account = [];
 				for (var p in rows) {
-					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname,
+										"lastname":rows[p].lastname, "email":rows[p].email_address,
 										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 				}
 				res.render('admin', context);
@@ -912,12 +917,12 @@ app.post('/admin', function(req,res,next) {
 				}
 				context.account = [];
 				for (var p in rows) {
-					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname,
+										"lastname":rows[p].lastname, "email":rows[p].email_address,
 										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 				}
 				res.render('admin', context);
-			});	
+			});
 		}
 		else {
 			pool.query("SELECT * FROM `user_profile`", function(err, rows, field) {
@@ -927,20 +932,20 @@ app.post('/admin', function(req,res,next) {
 				}
 				context.account = [];
 				for (var p in rows) {
-					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname, 
-										"lastname":rows[p].lastname, "email":rows[p].email_address, 
+					context.account.push({"id":rows[p].id, "username":rows[p].username, "firstname":rows[p].firstname,
+										"lastname":rows[p].lastname, "email":rows[p].email_address,
 										"admin_flag":rows[p].admin_flag, "timestamp":rows[p].created_ts});
 				}
 				res.render('admin', context);
 			});
 		}
 	}
-	
-	
+
+
 	if (req.body["reports"]) {
 		var num_users = 0;
 		var num_awards = 0;
-		
+
 		pool.query("SELECT * FROM `user_profile`", function(err, rows, field) {
 			if(err) {
 				next(err);
@@ -963,14 +968,14 @@ app.post('/admin', function(req,res,next) {
 			});
 		});
 	}
-	
+
 	//new handler for awardschart submit
 	if (req.body["awardschart"]) {
 		var num_edu = 0, num_inno = 0, num_ins = 0, num_team = 0, num_ty = 0;
-	
+
 		q = "SELECT award_type.description FROM `award_type`" +
 			"INNER JOIN `award` ON award.award_type = award_type.id";
-		
+
 		pool.query(q, function(err, rows, field) {
 			if(err) {
 				next(err);
@@ -995,7 +1000,7 @@ app.post('/admin', function(req,res,next) {
 			];
 			csv = convertArrayToCSV({data: award_data});
 			data = encodeURI(csv);
-		
+
 			var context = {data, num_edu, num_inno, num_ins, num_team, num_ty};
 			res.render('admin', context); //replace admin1 with report1.pug to restore pug template version
 		});
@@ -1003,7 +1008,7 @@ app.post('/admin', function(req,res,next) {
 });
 
 
-/* function to record award in database */	    	
+/* function to record award in database */
 function recordaward(giverid, receiverid, atype, amessage, adate){
 
 	var awardinsertqueryString = "insert into award " +
