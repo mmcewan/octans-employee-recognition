@@ -118,6 +118,9 @@ app.post('/signup', function (req, res) {
   cloudinary.uploader.upload(req.body.sigData, function(result) {
     console.log(result);
   }, { public_id: req.body.username });
+  
+  // set admin flag to "N" (not admin) by default
+  var adminFlag = "N";
 
   // build SQL to insert new user entry into user_profile table
   var query = "insert into user_profile " +
@@ -132,7 +135,7 @@ app.post('/signup', function (req, res) {
     req.body.lastname,
     req.body.email,
     cloudinary.url(req.body.username),
-    req.body.admin_flag
+    adminFlag
   ], function(err, dbres) {
     if (err) {
       if (err.code == '23505') {
@@ -156,8 +159,7 @@ app.get('/account', isLoggedIn, function (req, res) {
   res.render('account.handlebars');
 });
 
-// isLoggedIn,
-app.get('/admin', function(req,res) {
+app.get('/admin', isLoggedIn, function(req,res) {
   res.render('admin');
 });
 
