@@ -48,16 +48,16 @@ INSERT INTO user_profile (username, password, firstname, lastname, email_address
 ('admin', '$2y$10$bYrE1D2ZK8oS3tQFw6W8B.j8NaFYDef63Kv3kqf7maCQXPjQ.T1Lm', NULL, NULL, NULL, NULL, 'Y', CURRENT_TIMESTAMP, NULL, NULL);
 -- Test user :: username: octansosu, password: coffee123 (hashed)
 INSERT INTO user_profile (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts, resetPasswordToken, resetPasswordExpires) VALUES
-('octansosu', '$2y$10$GPORmfRXJ3HQmVvdZbxqRu9sDxHY8HU7kFVazIfIG/7fabtadop0W', 'Octans', 'Team', 'octansosu@gmail.com', 'user_data/octansosu.png', 'N', CURRENT_TIMESTAMP, NULL, NULL);
+('octansosu', '$2y$10$GPORmfRXJ3HQmVvdZbxqRu9sDxHY8HU7kFVazIfIG/7fabtadop0W', 'Octans', 'Team', 'octansosu@gmail.com', 'http://res.cloudinary.com/hvij0ogeg/image/upload/octansosu', 'N', CURRENT_TIMESTAMP, NULL, NULL);
 -- Test user :: username: testuser1, password: osu1 (hashed)
 INSERT INTO user_profile (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts, resetPasswordToken, resetPasswordExpires) VALUES
-('testuser1', '$2a$10$FMiRrnmuac4jERlsyWd6D.JWzOV7jW3492VYyGv0MTHun/tS6xAH.', 'Test', 'User1','testuser1@test.com', 'user_data/testuser1.png', 'N', CURRENT_TIMESTAMP, NULL, NULL);
+('testuser1', '$2a$10$FMiRrnmuac4jERlsyWd6D.JWzOV7jW3492VYyGv0MTHun/tS6xAH.', 'Test', 'User1','testuser1@test.com', 'http://res.cloudinary.com/hvij0ogeg/image/upload/testuser1', 'N', CURRENT_TIMESTAMP, NULL, NULL);
 -- Test user :: username: testuser2, password: osu2 (hashed)
 INSERT INTO user_profile (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts, resetPasswordToken, resetPasswordExpires) VALUES
-('testuser2', '$2a$10$OrhgZM1BUlfF4j5APpNFMej7KepCoCS/MxVjkuhCUJHyrZSp06IyK', 'Test', 'User2', 'testuser2@test.com', 'user_data/testuser2.png', 'N', CURRENT_TIMESTAMP, NULL, NULL);
+('testuser2', '$2a$10$OrhgZM1BUlfF4j5APpNFMej7KepCoCS/MxVjkuhCUJHyrZSp06IyK', 'Test', 'User2', 'testuser2@test.com', 'http://res.cloudinary.com/hvij0ogeg/image/upload/testuser2', 'N', CURRENT_TIMESTAMP, NULL, NULL);
 -- Test user :: username: testuser3, password: osu3 (hashed)
 INSERT INTO user_profile (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts, resetPasswordToken, resetPasswordExpires) VALUES
-('testuser3', '$2a$10$u83YaALhGrJvYAhTVs4oMumb872RTbk/BIkhuC6H.P2n30WTmNU92', 'Test', 'User3', 'testuser3@test.com', 'user_data/testuser3.png', 'N', CURRENT_TIMESTAMP, NULL, NULL);
+('testuser3', '$2a$10$u83YaALhGrJvYAhTVs4oMumb872RTbk/BIkhuC6H.P2n30WTmNU92', 'Test', 'User3', 'testuser3@test.com', 'http://res.cloudinary.com/hvij0ogeg/image/upload/testuser3', 'N', CURRENT_TIMESTAMP, NULL, NULL);
 
 -- Insert statements for award_type table
 INSERT INTO award_type (description) VALUES
