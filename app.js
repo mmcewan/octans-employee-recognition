@@ -97,9 +97,11 @@ app.post('/login',
   function(req, res) {
     var user = JSON.parse(req.user);
     if (user.admin_flag == 'Y') {
+    	session.admin = "Y";
       res.redirect('/admin');
     }
     else {
+    	session.admin = "N";
       res.redirect('/account');
     }
 });

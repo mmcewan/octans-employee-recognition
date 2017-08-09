@@ -24,10 +24,8 @@
           	else if(payload.atype == ""){
           		awardstatusline.innerText = "Please select an award type from the list.";
           	return;}
-          
-          //found help here: https://stackoverflow.com/questions/12876000/how-to-build-pdf-file-from-binary-string-returned-from-a-web-service-using-javas
+          	
           req.open('POST', '/new_award', true);
-          //req.responseType = "blob";
           req.setRequestHeader('Content-Type', 'application/json');
           req.addEventListener('load', function(){
         		awardstatusline.innerText = this.response;
