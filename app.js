@@ -636,9 +636,37 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 									//expires: 3600
 									}
 								});
+								
+								// verify connection configuration and send email
+								smtpTransport.verify(function(error, success) {
+   									if (error) {
+   										
+   										fs.unlinkSync(outputfilepath);
+										fs.unlinkSync(sigfilepath);
+        								
+        								console.log(error);
 
+        								res.status(406);
+      									res.send("SMTP SERVER PROBLEM");
+   										}
+   									else {
+        								smtpTransport.sendMail(message, function(error, info){
+        								if(error){
+        									console.log(error);
+        									res.status(407);
+	      									res.send("SENDMAIL PROBLEM");}
+	      								else{
+        									fs.unlinkSync(outputfilepath);
+											fs.unlinkSync(sigfilepath);
+											res.status(200);
+      										res.send("EMAIL SENT");
+      										}
+   										});
+   										}
+									});
+									
+							/*
 								smtpTransport.sendMail(message);
-
 								var file = fs.createReadStream(outputfilepath);
 								var stat = fs.statSync(outputfilepath);
 								res.setHeader('Content-Length', stat.size);
@@ -649,7 +677,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 								file.on('finish', function(){
 									fs.unlinkSync(outputfilepath);
 									fs.unlinkSync(sigfilepath);});
-									});
+									});*/
 								});
 							});
 						});

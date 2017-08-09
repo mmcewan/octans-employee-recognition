@@ -27,27 +27,11 @@
           
           //found help here: https://stackoverflow.com/questions/12876000/how-to-build-pdf-file-from-binary-string-returned-from-a-web-service-using-javas
           req.open('POST', '/new_award', true);
-          req.responseType = "blob";
+          //req.responseType = "blob";
           req.setRequestHeader('Content-Type', 'application/json');
           req.addEventListener('load', function(){
-          		if (this.status === 200) {
-          			// `blob` response
-          			// create `objectURL` of `this.response` : `.pdf` as `Blob`
-          			var file = window.URL.createObjectURL(this.response);
-          			var a = document.createElement("a");
-          			a.href = file;
-          			a.download = this.response.name || "awardPDF";
-          			document.body.appendChild(a);
-          			a.click();
-          			document.body.removeChild(a);
-        			}
-        		else if(this.status == 403) {
-        			var awardstatusline = document.getElementById('awardResult');
-        			awardstatusline.innerText = this.response;}
-        		else if(this.status == 404) {
-        			var awardstatusline = document.getElementById('awardResult');
-        			awardstatusline.innerText = this.response;}
-        	});
+          		awardstatusline.innerText = "";
+        		awardstatusline.innerText = this.response;});
           req.send(JSON.stringify(payload));  
         }); 
       }
