@@ -659,13 +659,15 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 								});
 							});
 						});
-		
-				});
-		    }
+					});
+				}
+			});
+			}
 		});
-	}
+		}
+	});
 });
-});
+
 
 
 // generate report
