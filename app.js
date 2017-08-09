@@ -567,12 +567,12 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
   			    pool.query(typequeryString, [atype], function(err, dbres) {
 		    	if (err)  {
 		    		res.status(500);
-		    		res.send("SERVER ERROR");
+		    		res.send("Server database error.");
       				console.log(err);
     			}
     			else if (dbres.length != 1) {
       				res.status(402);
-      				res.send("AWARD NOT FOUND");
+      				res.send("Server database error.");
     				}
 		    	else
 		    		{
@@ -639,19 +639,20 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
         								console.log(error);
 
         								res.status(406);
-      									res.send("SMTP SERVER PROBLEM");
+      									res.send("Email server error.");
    										}
    									else {
         								smtpTransport.sendMail(message, function(error, info){
         								if(error){
         									console.log(error);
         									res.status(407);
-	      									res.send("SENDMAIL PROBLEM");}
+	      									res.send("Error sending email.");}
 	      								else{
         									fs.unlinkSync(outputfilepath);
 											fs.unlinkSync(sigfilepath);
+											req.flash('message', 'Success! You have sent an award.');
 											res.status(200);
-      										res.send("EMAIL SENT");
+      										res.redirect("/");
       										}
    										});
    										}
