@@ -650,9 +650,8 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 	      								else{
         									fs.unlinkSync(outputfilepath);
 											fs.unlinkSync(sigfilepath);
-											req.flash('message', 'Success! You have sent an award.');
 											res.status(200);
-      										res.redirect("/");
+      										res.send("Success! You have sent an award.");
       										}
    										});
    										}
