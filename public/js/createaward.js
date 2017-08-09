@@ -30,8 +30,8 @@
           //req.responseType = "blob";
           req.setRequestHeader('Content-Type', 'application/json');
           req.addEventListener('load', function(){
-          		awardstatusline.innerText = "";
-        		awardstatusline.innerText = this.response;});
+          		if(this.status != 200)
+        			awardstatusline.innerText = this.response;});
           req.send(JSON.stringify(payload));  
         }); 
       }
