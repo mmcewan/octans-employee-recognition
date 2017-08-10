@@ -534,11 +534,11 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
   pool.query(giverQueryString, [req.user], function(err, dbres) {
     if (err)  {
       res.status(500);
-      res.send("SERVER ERROR");
+      res.send("Server database error.");
       console.log(err);
     } else if (dbres.length != 1) {
       res.status(402);
-      res.send("GIVER USER NOT FOUND");
+      res.send("Sending user not found.");
     }
     else
     	{
@@ -551,12 +551,12 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
   		pool.query(receiverqueryString, [receiverid], function(err, dbres) {
     		if (err)  {
       		res.status(500);
-      		res.send("SERVER ERROR");
+      		res.send("Server database error.");
       		console.log(err);
     		}
     		else if (dbres.length != 1) {
       		res.status(402);
-      		res.send("RECEIVER USER NOT FOUND");
+      		res.send("Recipient user not found");
     		}
 		    else
 		    	{
@@ -653,7 +653,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
         									fs.unlinkSync(outputfilepath);
 											fs.unlinkSync(sigfilepath);
 											res.status(200);
-      										res.send("Success! You have sent an award.");
+      										res.send("Success! An award has been sent to " + aemail);
       										}
    										});
    										}
