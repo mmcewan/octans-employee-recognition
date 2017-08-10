@@ -97,9 +97,11 @@ app.post('/login',
   function(req, res) {
     var user = JSON.parse(req.user);
     if (user.admin_flag == 'Y') {
+    	session.admin = "Y";
       res.redirect('/admin');
     }
     else {
+    	session.admin = "N";
       res.redirect('/account');
     }
 });
@@ -329,6 +331,7 @@ app.post('/forgot', function(req, res, next) {
           "http://" + req.headers.host + "/reset/" + token + "\n\n" +
           "If you did not request this, please ignore this email and your password will remain unchanged.\n"
       };
+      
       smtpTransport.sendMail(msg, function(err) {
         req.flash('message', 'An e-mail has been sent to ' + email + ' with further instructions.');
         done(err, 'done');
@@ -531,11 +534,11 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
   pool.query(giverQueryString, [req.user], function(err, dbres) {
     if (err)  {
       res.status(500);
-      res.send("SERVER ERROR");
+      res.send("Server database error.");
       console.log(err);
     } else if (dbres.length != 1) {
       res.status(402);
-      res.send("GIVER USER NOT FOUND");
+      res.send("Sending user not found.");
     }
     else
     	{
@@ -548,12 +551,12 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
   		pool.query(receiverqueryString, [receiverid], function(err, dbres) {
     		if (err)  {
       		res.status(500);
-      		res.send("SERVER ERROR");
+      		res.send("Server database error.");
       		console.log(err);
     		}
     		else if (dbres.length != 1) {
       		res.status(402);
-      		res.send("RECEIVER USER NOT FOUND");
+      		res.send("Recipient user not found");
     		}
 		    else
 		    	{
@@ -566,26 +569,22 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
   			    pool.query(typequeryString, [atype], function(err, dbres) {
 		    	if (err)  {
 		    		res.status(500);
-		    		res.send("SERVER ERROR");
+		    		res.send("Server database error.");
       				console.log(err);
     			}
     			else if (dbres.length != 1) {
       				res.status(402);
-      				res.send("AWARD NOT FOUND");
+      				res.send("Server database error.");
     				}
 		    	else
 		    		{
 		    		var typename = dbres[0].description;
-
 		    		//get image from cloudinary data store with this http call, based on this thread: https://stackoverflow.com/questions/11944932/how-to-download-a-file-with-node-js-without-using-third-party-libraries
 		    		var http = require('http');
 		    		var sigfilepath = path.join(__dirname, 'cert_resources', 'file.jpg');
 		    		var sigfile = fs.createWriteStream(sigfilepath);
-
 					sigfile.on('open', function(){
-
 						var get_cloud_image = http.get(asignature, function(response) {
-
 							response.pipe(sigfile);
 							var backgroundfile = path.join(__dirname, 'cert_resources', 'background1.jpg');
 							var logofile = path.join(__dirname, 'cert_resources', 'logo.png');
@@ -603,11 +602,8 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 							var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
 							var outputfile = fs.createWriteStream(outputfilepath);
 							outputfile.on('open', function(){
-
 								var latexstream = latex(latexStrings).pipe(outputfile);
-
 								latexstream.on('finish', function(){
-
 								var message = {
 									from: 'octansosu@gmail.com',
 									to: aemail,
@@ -618,7 +614,6 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 										filename: 'award.pdf',
 										path: outputfilepath
 										}]};
-
 								var smtpTransport = nodemailer.createTransport(
 								{
 								service: "gmail",
@@ -635,31 +630,46 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 									//accessToken : "ya29.GluYBN_sqLOeg_diZ5-VZTvamNRrh1DQeXLV8gdBDu3XfPCAeoOQrCkhzCPsW68RBOZsMgmM9tOaw0xZ0tJILygemEJyacE2NkgAMbEEnULH3F9mn9Fwwv1DlTdj",
 									//expires: 3600
 									}
-								});
+								});	
+								// verify connection configuration and send email
+								smtpTransport.verify(function(error, success) {
+   									if (error) {
+   										
+   										fs.unlinkSync(outputfilepath);
+										fs.unlinkSync(sigfilepath);
+        								
+        								console.log(error);
 
-								smtpTransport.sendMail(message);
-
-								var file = fs.createReadStream(outputfilepath);
-								var stat = fs.statSync(outputfilepath);
-								res.setHeader('Content-Length', stat.size);
-								res.setHeader('Content-Type', 'application/pdf');
-								res.setHeader('Content-Disposition', 'attachment; filename=award.pdf');
-								file.pipe(res);
-
-								file.on('finish', function(){
-									fs.unlinkSync(outputfilepath);
-									fs.unlinkSync(sigfilepath);});
+        								res.status(406);
+      									res.send("Email server error.");
+   										}
+   									else {
+        								smtpTransport.sendMail(message, function(error, info){
+        								if(error){
+        									console.log(error);
+        									res.status(407);
+	      									res.send("Error sending email.");}
+	      								else{
+        									fs.unlinkSync(outputfilepath);
+											fs.unlinkSync(sigfilepath);
+											res.status(200);
+      										res.send("Success! An award has been sent to " + aemail);
+      										}
+   										});
+   										}
 									});
 								});
 							});
 						});
-					}
-				});
-		    }
+					});
+				}
+			});
+			}
 		});
-	}
+		}
+	});
 });
-});
+
 
 
 // generate report
