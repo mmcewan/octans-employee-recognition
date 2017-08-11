@@ -72,20 +72,16 @@ app.use(express.static('public'));
 app.get('/',
 	function (req, res) {
 	if(req.isAuthenticated()){
-			var adminQueryString = "select admin_flag from user_profile " +
-                    " where username = ?";
-  			pool.query(adminQueryString, [req.user], function(err, dbres) {
-    			var admin_flag = dbres[0].admin_flag;
-    		if (admin_flag == 'Y') {
-      		 res.redirect('/admin');
-    		}
-    		else {
-     		 res.redirect('/account');
-    		}
-    	});
+    if (session.admin == 'Y') {
+      res.redirect('/admin');
     }
-    else
-		  res.render('home.handlebars');
+    else {
+      res.redirect('/account');
+    }
+  }
+  else {
+    res.render('home.handlebars');
+  }
 });
 
 app.get('/login', function(req, res) {
@@ -140,9 +136,9 @@ app.post('/signup', function (req, res) {
     adminFlag
   ], function(err, dbres) {
     if (err) {
-      if (err.code == '23505') {
-        res.status(409);
-        res.send("Username already in use.");
+      if (err.code == 'ER_DUP_ENTRY') {
+        req.flash('message', 'Username already in use. Please try again.');
+        res.render('signup.handlebars', { message: req.flash('message') });
         console.log(err);
       }
       else {
@@ -158,11 +154,23 @@ app.post('/signup', function (req, res) {
 });
 
 app.get('/account', isLoggedIn, function (req, res) {
-  res.render('account.handlebars');
+  if (session.admin == 'N') {
+    res.render('account.handlebars');
+  }
+  else {
+    req.flash('message', 'Please log in as a non-admin user to access that page.');
+    res.render('login.handlebars', { message: req.flash('message') });
+  }
 });
 
 app.get('/admin', isLoggedIn, function(req,res) {
-  res.render('admin');
+  if (session.admin == 'Y') {
+    res.render('admin');
+  }
+  else {
+    req.flash('message', 'Sorry, you must be an admin user to access that page.');
+    res.render('login.handlebars', { message: req.flash('message') });
+  }
 });
 
 app.get('/myawards', isLoggedIn, function (req, res, next) {
@@ -465,9 +473,14 @@ app.listen(port, function(err) {
  route to render page with new award form
 */
 app.get('/makeaward', isLoggedIn, function(req, res, next){
-  res.render('createaward.handlebars');
+  if (session.admin == 'N') {
+    res.render('createaward.handlebars');
+  }
+  else {
+    req.flash('message', 'Please log in as a non-admin user to access that page.');
+    res.render('login.handlebars', { message: req.flash('message') });
+  }
 });
-
 
 /*
   route to return list of award types
