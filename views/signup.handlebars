@@ -5,6 +5,9 @@
       <div class="inner">
         <h2 class="major">Create your account</h2>
         <p>Start recognizing your co-workers for their contributions now! We just need a few details from you.</p>
+        {{#if message}}
+          <div>{{ message }}</div>
+        {{/if}}
         <form id="register" method="post" action="/signup">
           <div class="field">
             <label for="email">Username</label>
