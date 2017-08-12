@@ -163,6 +163,7 @@ app.get('/account', isLoggedIn, function (req, res) {
   }
 });
 
+
 app.get('/admin', isLoggedIn, function(req,res) {
   if (session.admin == 'Y') {
     res.render('admin');
@@ -684,73 +685,6 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 });
 
 
-
-// generate report
-app.get('/report1', function(req,res,next) {
-	var num_edu = 0, num_inno = 0, num_ins = 0, num_team = 0, num_ty = 0;
-
-	q = "SELECT award_type.description FROM `award_type`" +
-		"INNER JOIN `award` ON award.award_type = award_type.id";
-
-	pool.query(q, function(err, rows, field) {
-		if(err) {
-			next(err);
-			return;
-		}
-		for (var p in rows) {
-			switch(rows[p].description) {
-				case "Education": num_edu++; break;
-				case "Innovation": num_inno++; break;
-				case "Inspiration": num_ins++; break;
-				case "Teamwork": num_team++; break;
-				case "Appreciation": num_ty++; break;
-			}
-		}
-		var data, csv;
-		var award_data = [
-			{"Award Type": "Education", "Amount": num_edu},
-			{"Award Type": "Innovation", "Amount": num_inno},
-			{"Award Type": "Inspiration", "Amount": num_ins},
-			{"Award Type": "Teamwork", "Amount": num_team},
-			{"Award Type": "Appreciation", "Amount": num_ty},
-		];
-		csv = convertArrayToCSV({data: award_data});
-		data = encodeURI(csv);
-
-		var context = {data, num_edu, num_inno, num_ins, num_team, num_ty};
-		res.render('admin', context);
-	});
-});
-
-// Helper function
-function convertArrayToCSV(args) {
-	var result, ctr, keys, columnDelimiter, lineDelimiter, data;
-
-    data = args.data || null;
-    if (data == null || !data.length) {
-        return null;
-    }
-
-    columnDelimiter = args.columnDelimiter || ',';
-    lineDelimiter = args.lineDelimiter || '\n';
-    keys = Object.keys(data[0]);
-
-    result = '';
-    result += keys.join(columnDelimiter);
-    result += lineDelimiter;
-
-    data.forEach(function(item) {
-        ctr = 0;
-        keys.forEach(function(key) {
-            if (ctr > 0) result += columnDelimiter;
-            result += item[key];
-            ctr++;
-        });
-        result += lineDelimiter;
-    });
-    return result;
-}
-
 // admin functions
 app.post('/admin', function(req,res,next) {
 	var context = {};
@@ -992,12 +926,12 @@ app.post('/admin', function(req,res,next) {
 		});
 	}
 
-	//new handler for awardschart submit
+	// handler for awardschart submit
 	if (req.body["awardschart"]) {
 		var num_edu = 0, num_inno = 0, num_ins = 0, num_team = 0, num_ty = 0;
 
-		q = "SELECT award_type.description FROM `award_type`" +
-			"INNER JOIN `award` ON award.award_type = award_type.id";
+		var q = "SELECT award_type.description FROM `award_type` \
+				INNER JOIN `award` ON award.award_type = award_type.id";
 
 		pool.query(q, function(err, rows, field) {
 			if(err) {
@@ -1024,11 +958,64 @@ app.post('/admin', function(req,res,next) {
 			csv = convertArrayToCSV({data: award_data});
 			data = encodeURI(csv);
 
-			var context = {data, num_edu, num_inno, num_ins, num_team, num_ty};
-			res.render('admin', context); //replace admin1 with report1.pug to restore pug template version
+			context = {data, num_edu, num_inno, num_ins, num_team, num_ty};
+			res.render('admin', context); 
 		});
 	}
+	
+	if (req.body["awardschart2"]) {
+		var q = "SELECT user_profile.username, COUNT(award.id) AS awardCount FROM user_profile \
+				INNER JOIN award ON award.sender_id = user_profile.id GROUP BY user_profile.username";
+		
+		pool.query(q, function(err, rows, field) {
+			if(err) {
+				next(err);
+				return;
+			}
+			
+			var data2, csv;
+			var award_data = [];
+			for (var p in rows) {
+				award_data.push({"User": rows[p].username, "Awards": rows[p].awardCount});
+			}
+			
+			csv = convertArrayToCSV({data2: award_data});
+			data2 = encodeURI(csv);
+			context = {data2, award_data};
+			res.render('admin', context);
+		});
+	}
+	
 });
+
+// Helper function
+function convertArrayToCSV(args) {
+	var result, ctr, keys, columnDelimiter, lineDelimiter, data;
+
+    data = args.data || args.data2 || null;
+    if (data == null || !data.length) {
+        return null;
+    }
+
+    columnDelimiter = args.columnDelimiter || ',';
+    lineDelimiter = args.lineDelimiter || '\n';
+    keys = Object.keys(data[0]);
+
+    result = '';
+    result += keys.join(columnDelimiter);
+    result += lineDelimiter;
+
+    data.forEach(function(item) {
+        ctr = 0;
+        keys.forEach(function(key) {
+            if (ctr > 0) result += columnDelimiter;
+            result += item[key];
+            ctr++;
+        });
+        result += lineDelimiter;
+    });
+    return result;
+}
 
 
 /* function to record award in database */

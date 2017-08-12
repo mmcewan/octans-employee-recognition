@@ -25,7 +25,9 @@
 
 					<h3>Charts</h3>
 					<form method="post">
-						<input type="submit" name="awardschart" value="Types of Awards Created"></form>
+						<input type="submit" name="awardschart" value="Types of Awards Created"><br/><br/>
+						<input type="submit" name="awardschart2" value="Users that Created Awards">
+					</form>
 				{{/each}}
 			{{/if}}
 
@@ -44,6 +46,25 @@
 
 			<script  type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 			<script src="./js/showawarddata.js"></script>
+			{{/if}}
+			
+			{{#if award_data}}
+			<table>
+				<tr>
+					<th>User</th>
+					<th>Number of Awards</th>
+				</tr>
+				{{#each award_data}}
+				<tr>
+					<td>{{this.User}}</td>
+					<td>{{this.Awards}}</td>
+				</tr>
+				{{/each}}
+			</table>
+			{{/if}}
+			
+			{{#if data2}}
+				<a href="data:text/csv;charset=utf-8,{{data2}}" download="report2.csv">Download report as CSV</a>
 			{{/if}}
 		</div>
 
