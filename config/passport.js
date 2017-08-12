@@ -20,7 +20,7 @@ module.exports = function(passport) {
     done(null, userObj.username);
   });
 
-  // user to deserialize the user
+  // used to deserialize the user
   passport.deserializeUser(function(id, done) {
     var query = "select username, password from user_profile where username = ?;";
     pool.query(query,[ id ], function(err, dbres) {
