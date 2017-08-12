@@ -107,9 +107,6 @@ app.get('/signup', function(req, res) {
 });
 
 app.post('/signup', function (req, res) {
-
-  // generate random salt
-  var salt = bcrypt.genSaltSync(10);
   // hash password
   var hash = bcrypt.hashSync(req.body.password, salt);
 
@@ -389,8 +386,8 @@ app.post('/reset/:token', function(req, res, next) {
         }
         var username = rows[0].username;
         var email = rows[0].email_address;
-        // generate random salt & hash new password
-        var salt = bcrypt.genSaltSync(10);
+
+        // hash new password
         var hash = bcrypt.hashSync(req.body.password, salt);
         done(err, username, email, hash);
       });
