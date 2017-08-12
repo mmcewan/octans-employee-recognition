@@ -50,25 +50,4 @@ module.exports = function(passport) {
         return done(null, user);
       });
     }));
-    
-
-  passport.use('local', new LocalStrategy({
-    passReqToCallback : true
-  },
-    function(req, username, password, done) {
-      var query = "select username, admin_flag from user_profile where username = ?;";
-      pool.query(query, [username], function (err, dbres) {
-        if (err) {
-          return done(err);
-        }
-        if (dbres.length == 0) {
-          return done(null, false, req.flash('message', 'No user found.'));
-        }
-        var userData = new Object();
-        userData.username = dbres[0].username;
-        userData.admin_flag = dbres[0].admin_flag;
-        var user = JSON.stringify(userData)
-        return done(null, user);
-      });
-    }));
 };
