@@ -393,7 +393,6 @@ app.post('/reset/:token', function(req, res, next) {
       });
     },
     function(username, email, hash, done) {
-        console.log()
         var updPwd = "update user_profile"
         + " set password = ?, resetPasswordToken = NULL, resetPasswordExpires = NULL"
         + " where username = ? ;"
