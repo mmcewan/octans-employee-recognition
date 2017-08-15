@@ -589,14 +589,10 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 		    	else
 		    		{
 		    		var typename = dbres[0].description;
-		    		//get image from cloudinary data store with this http call, based on this thread: https://stackoverflow.com/questions/11944932/how-to-download-a-file-with-node-js-without-using-third-party-libraries
-		    		var http = require('http');
-		    		var sigfilepath = path.join(__dirname, 'cert_resources', 'file.jpg');
-		    		var sigfile = fs.createWriteStream(sigfilepath);
-					sigfile.on('open', function(){
-						var get_cloud_image = http.get(asignature, function(response) {
-							response.pipe(sigfile);
-							var backgroundfile = path.join(__dirname, 'cert_resources', 'background1.jpg');
+		    		if(!aemail || aemail == "")
+		    			aemail = "octansosu@gmail.com";
+		    		if(!asignature || asignature == ""){
+		    				var backgroundfile = path.join(__dirname, 'cert_resources', 'background1.jpg');
 							var logofile = path.join(__dirname, 'cert_resources', 'logo.png');
 							if(atype == 1)
 								backgroundfile = path.join(__dirname, 'cert_resources', 'background1.jpg');
@@ -608,7 +604,7 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 								backgroundfile = path.join(__dirname, 'cert_resources', 'background4.jpg');
 							else if(atype == 5)
 								backgroundfile = path.join(__dirname, 'cert_resources', 'background5.jpg');
-							var latexStrings = ["\\documentclass[tikz, 20pt]{extarticle}", "\\usepackage{color}", "\\usepackage{tikz}", "\\usepackage[landscape,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}", "\\usepackage[T1]{fontenc}", "\\usepackage{setspace}", "\\usepackage{graphicx}", "\\usepackage{eso-pic}", "\\newcommand \\BackgroundPic{\\put(0,0){\\parbox[b][\\paperheight]{\\paperwidth}{\\vfill \\centering \\includegraphics[height = \\paperheight, width = \\paperwidth]{" + backgroundfile +"} \\vfill}}}",  "\\begin{document}", "\\AddToShipoutPicture{\\BackgroundPic}", "\\pagenumbering{gobble}", "\\noindent", "\\centering \\Huge \\color{red} Octans Group Company " + "\\begin{tikzpicture}[remember picture,overlay]\\node[sep=0pt]{\\includegraphics[width=2cm, height=2cm]{" + logofile + "}} \\end{tikzpicture} \\vskip0.8em \\normalsize Corvallis, OR\\vskip0.8em \\large \\color{black} Achievement award in recognition of \\vskip0.8em \\Huge \\color{red}" + typename + "\\vskip0.6em  \\large \\color{black}Presented to " + areceiver + "\\vskip0.8em  \\normalsize \\color{black}" + amessage + "\\vskip1.0em  \\normalsize \\color{black} Recognized by \\color{black}" + agiver + " on " + adate + ". \\vskip1.0em Signed: \\begin{tikzpicture}[remember picture,overlay]\\node[inner sep=0pt] at (2,0){\\includegraphics[width=2.5cm, height=2.5cm]{" + sigfilepath + "}} \\end{tikzpicture} \\end{document}" ];
+							var latexStrings = ["\\documentclass[tikz, 20pt]{extarticle}", "\\usepackage{color}", "\\usepackage{tikz}", "\\usepackage[landscape,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}", "\\usepackage[T1]{fontenc}", "\\usepackage{setspace}", "\\usepackage{graphicx}", "\\usepackage{eso-pic}", "\\newcommand \\BackgroundPic{\\put(0,0){\\parbox[b][\\paperheight]{\\paperwidth}{\\vfill \\centering \\includegraphics[height = \\paperheight, width = \\paperwidth]{" + backgroundfile +"} \\vfill}}}",  "\\begin{document}", "\\AddToShipoutPicture{\\BackgroundPic}", "\\pagenumbering{gobble}", "\\noindent", "\\centering \\Huge \\color{red} Octans Group Company " + "\\begin{tikzpicture}[remember picture,overlay]\\node[sep=0pt]{\\includegraphics[width=2cm, height=2cm]{" + logofile + "}} \\end{tikzpicture} \\vskip0.8em \\normalsize Corvallis, OR\\vskip0.8em \\large \\color{black} Achievement award in recognition of \\vskip0.8em \\Huge \\color{red}" + typename + "\\vskip0.6em  \\large \\color{black}Presented to " + areceiver + "\\vskip0.8em  \\normalsize \\color{black}" + amessage + "\\vskip1.0em  \\normalsize \\color{black} Recognized by \\color{black}" + agiver + " on " + adate + ". \\vskip1.0em \\end{document}" ];
 							var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
 							var outputfile = fs.createWriteStream(outputfilepath);
 							outputfile.on('open', function(){
@@ -646,7 +642,6 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
    									if (error) {
    										
    										fs.unlinkSync(outputfilepath);
-										fs.unlinkSync(sigfilepath);
         								
         								console.log(error);
 
@@ -661,19 +656,99 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 	      									res.send("Error sending email.");}
 	      								else{
         									fs.unlinkSync(outputfilepath);
-											fs.unlinkSync(sigfilepath);
 											res.status(200);
-      										res.send("Success! An award has been sent to " + aemail);
-      										}
-   										});
+      										res.send("Success! An award has been sent to " + aemail);}
+   											});
    										}
 									});
 								});
 							});
-						});
-					});
-				}
-			});
+						}
+		    		else{
+		    			//get image from cloudinary data store with this http call, based on this thread: https://stackoverflow.com/questions/11944932/how-to-download-a-file-with-node-js-without-using-third-party-libraries
+		    			var http = require('http');
+						var sigfilepath = path.join(__dirname, 'cert_resources', 'file.jpg');
+						var sigfile = fs.createWriteStream(sigfilepath);
+						sigfile.on('open', function(){
+							var get_cloud_image = http.get(asignature, function(response) {
+								response.pipe(sigfile);
+								var backgroundfile = path.join(__dirname, 'cert_resources', 'background1.jpg');
+								var logofile = path.join(__dirname, 'cert_resources', 'logo.png');
+								if(atype == 1)
+									backgroundfile = path.join(__dirname, 'cert_resources', 'background1.jpg');
+								else if(atype == 2)
+									backgroundfile = path.join(__dirname, 'cert_resources', 'background2.jpg');
+								else if(atype == 3)
+									backgroundfile = path.join(__dirname, 'cert_resources', 'background3.jpg');
+								else if(atype == 4)
+									backgroundfile = path.join(__dirname, 'cert_resources', 'background4.jpg');
+								else if(atype == 5)
+									backgroundfile = path.join(__dirname, 'cert_resources', 'background5.jpg');
+								var latexStrings = ["\\documentclass[tikz, 20pt]{extarticle}", "\\usepackage{color}", "\\usepackage{tikz}", "\\usepackage[landscape,left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}", "\\usepackage[T1]{fontenc}", "\\usepackage{setspace}", "\\usepackage{graphicx}", "\\usepackage{eso-pic}", "\\newcommand \\BackgroundPic{\\put(0,0){\\parbox[b][\\paperheight]{\\paperwidth}{\\vfill \\centering \\includegraphics[height = \\paperheight, width = \\paperwidth]{" + backgroundfile +"} \\vfill}}}",  "\\begin{document}", "\\AddToShipoutPicture{\\BackgroundPic}", "\\pagenumbering{gobble}", "\\noindent", "\\centering \\Huge \\color{red} Octans Group Company " + "\\begin{tikzpicture}[remember picture,overlay]\\node[sep=0pt]{\\includegraphics[width=2cm, height=2cm]{" + logofile + "}} \\end{tikzpicture} \\vskip0.8em \\normalsize Corvallis, OR\\vskip0.8em \\large \\color{black} Achievement award in recognition of \\vskip0.8em \\Huge \\color{red}" + typename + "\\vskip0.6em  \\large \\color{black}Presented to " + areceiver + "\\vskip0.8em  \\normalsize \\color{black}" + amessage + "\\vskip1.0em  \\normalsize \\color{black} Recognized by \\color{black}" + agiver + " on " + adate + ". \\vskip1.0em Signed: \\begin{tikzpicture}[remember picture,overlay]\\node[inner sep=0pt] at (2,0){\\includegraphics[width=2.5cm, height=2.5cm]{" + sigfilepath + "}} \\end{tikzpicture} \\end{document}" ];
+								var outputfilepath = path.join(__dirname, 'pdf_temp', 'output.pdf');
+								var outputfile = fs.createWriteStream(outputfilepath);
+								outputfile.on('open', function(){
+									var latexstream = latex(latexStrings).pipe(outputfile);
+									latexstream.on('finish', function(){
+									var message = {
+										from: 'octansosu@gmail.com',
+										to: aemail,
+										subject: "Congratulations, you have received an award!",
+										text: "Congrats, someone has created an award for you through the Octans Employee Recognition System. Please download the attached PDF to view your award.",
+										attachments: [
+											{
+											filename: 'award.pdf',
+											path: outputfilepath
+											}]};
+									var smtpTransport = nodemailer.createTransport(
+									{
+									service: "gmail",
+									auth: {
+
+										//should move this to a config file
+										type: "OAuth2",
+										user         : "octansosu",
+										clientId: "786988129141-itqerrohjv99fiqk47vctg0132kqhaeq.apps.googleusercontent.com",
+										clientSecret: "efk5-I22oRg3MWN0e95ZrL90",
+										refreshToken : "1/fO50uE99BsxSDqyRTutCaqs45f5nNG9cIwzG8vLZ30E"
+
+										//accessToken not needed if refreshToken provided
+										//accessToken : "ya29.GluYBN_sqLOeg_diZ5-VZTvamNRrh1DQeXLV8gdBDu3XfPCAeoOQrCkhzCPsW68RBOZsMgmM9tOaw0xZ0tJILygemEJyacE2NkgAMbEEnULH3F9mn9Fwwv1DlTdj",
+										//expires: 3600
+										}
+									});	
+									// verify connection configuration and send email
+									smtpTransport.verify(function(error, success) {
+										if (error) {
+										
+											fs.unlinkSync(outputfilepath);
+											fs.unlinkSync(sigfilepath);
+										
+											console.log(error);
+
+											res.status(406);
+											res.send("Email server error.");
+											}
+										else {
+											smtpTransport.sendMail(message, function(error, info){
+											if(error){
+												console.log(error);
+												res.status(407);
+												res.send("Error sending email.");}
+											else{
+												fs.unlinkSync(outputfilepath);
+												fs.unlinkSync(sigfilepath);
+												res.status(200);
+												res.send("Success! An award has been sent to " + aemail);}
+												});
+											}
+										});
+									});
+								});
+							});
+						});}
+					}
+				});
 			}
 		});
 		}
