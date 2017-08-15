@@ -760,33 +760,75 @@ var giverQueryString = "select id, firstname, lastname, signature from user_prof
 app.post('/admin', function(req,res,next) {
 	var context = {};
 
-	// Add new user/admin
-	if (req.body["add-new"]) {
-		res.render('admin-new');
+	// Add new user account
+	if (req.body["add-newuser"]) {
+		res.render('user-new');
 	}
-
-	// Insert new user to database
-	if (req.body["insert"]) {
+	
+	// Insert new user account to database
+	if (req.body["insert-user"]) {
 		var hash = bcrypt.hashSync(req.body.password, salt);
+		
+		cloudinary.uploader.upload(req.body.sigData, function(result) {
+			console.log(result);
+		}, { public_id: req.body.username });
+		  
+		var admin_flag = "N";
 
 		pool.query("INSERT INTO `user_profile` (username, password, firstname, lastname, email_address, signature, admin_flag, created_ts)" +
 					" VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
-					[req.body.username, hash, req.body.firstname, req.body.lastname, req.body.email, req.body.signature, req.body.admin_flag],
+					[req.body.username, hash, req.body.firstname, req.body.lastname, req.body.email, cloudinary.url(req.body.username), admin_flag],
 					function(err,result){
-			if(err){
-				if (err.code == '23505') {
-					res.status(409);
-					res.send("Username already in use.");
+			if (err) {
+			    if (err.code == 'ER_DUP_ENTRY') {
+					req.flash('message', 'Username already in use. Please try again.');
+					res.render('user-new', { message: req.flash('message') });
 					console.log(err);
-				}
+			    }
 				else {
 					res.status(500);
-					res.send("Error! Something broke...");
+					res.send("Error! Something isn't right. Confirm the database is up.");
 					console.log(err);
 				}
+			} 
+			else {
+				req.flash('message', 'New user account created successfully!');
+				res.render('admin', { message: req.flash('message') });
 			}
-			req.flash('message', 'New account created successfully!');
-			res.render('admin', { message: req.flash('message') });
+		});
+	}
+	
+	// Add new admin account
+	if (req.body["add-newadmin"]) {
+		res.render('admin-new');
+	}
+
+	// Insert new admin account to database
+	if (req.body["insert-admin"]) {
+		var hash = bcrypt.hashSync(req.body.password, salt);
+		
+		var admin_flag = "Y";
+		
+		pool.query("INSERT INTO `user_profile` (username, password, firstname, lastname, email_address, admin_flag, created_ts)" +
+					" VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
+					[req.body.username, hash, req.body.firstname, req.body.lastname, req.body.email, admin_flag],
+					function(err,result){
+			if (err) {
+			    if (err.code == 'ER_DUP_ENTRY') {
+					req.flash('message', 'Username already in use. Please try again.');
+					res.render('admin-new', { message: req.flash('message') });
+					console.log(err);
+			    }
+				else {
+					res.status(500);
+					res.send("Error! Something isn't right. Confirm the database is up.");
+					console.log(err);
+				}
+			} 
+			else {
+				req.flash('message', 'New admin account created successfully!');
+				res.render('admin', { message: req.flash('message') });
+			}
 		});
 	}
 
@@ -819,8 +861,6 @@ app.post('/admin', function(req,res,next) {
 			context.firstname = rows[0].firstname;
 			context.lastname = rows[0].lastname;
 			context.email = rows[0].email_address;
-			//context.signature
-			context.admin_flag = rows[0].admin_flag;
 			res.render('admin-update', context);
 		});
 	}
@@ -829,8 +869,8 @@ app.post('/admin', function(req,res,next) {
 	if (req.body["update"]) {
 		var admin_flag = req.body.admin_flag;
 
-		pool.query("UPDATE `user_profile` SET username=?, firstname=?, lastname=?, email_address=?, admin_flag=? WHERE id=?",
-					[req.body.username, req.body.firstname, req.body.lastname, req.body.email, req.body.admin_flag, req.body.id],
+		pool.query("UPDATE `user_profile` SET username=?, firstname=?, lastname=?, email_address=? WHERE id=?",
+					[req.body.username, req.body.firstname, req.body.lastname, req.body.email, req.body.id],
 					function(err, result) {
 			if(err) {
 				next(err);
