@@ -1,50 +1,42 @@
 <section class="wrapper">
 	<div class="inner">
 		<h2 class="major">New User Account</h2>
-		
+
 		{{#if message}}
-          <div>{{ message }}</div>
-        {{/if}}
-		
+			<div>{{ message }}</div>
+    {{/if}}
+
 		<form method="post">
 			<br/>
-			
 			<div class="field">
 				<label for="username">Username</label>
 				<input type="text" name="username" id="username" required />
 			</div>
-			
 			<div class="field">
 				<label for="password">Password</label>
 				<input type="password" name="password" id="password" required />
 			</div>
-			
 			<div class="field">
 				<label for="confirm-password">Confirm Password</label>
 				<input type="password" name="confirm-password" id="confirm-password" required />
 			</div>
-			
 			<div class="field">
 				<label for="firstname">First Name</label>
-				<input type="text" name="firstname" />
+				<input type="text" name="firstname" required />
 			</div>
-			
 			<div class="field">
 				<label for="lastname">Last Name</label>
-				<input type="text" name="lastname" />
+				<input type="text" name="lastname" required />
 			</div>
-			
 			<div class="field">
 				<label for="email">Email</label>
 				<input type="email" name="email" id="email" required />
 			</div>
-			
 			<label for="signature">Signature</label>
 			<div id=signature-wrapper>
 				<canvas id="signature" name="signature" class="signature" width=700 height=100></canvas>
 				<button type="button" class="button small signature-footer" id="clearButton">Clear</button>
 			</div>
-			
 			<input type="hidden" name="sigData" id="sigData"/>
 			<ul class="actions">
 				<li><input class="special" type="submit" id="complete-registration" name="insert-user" /></li>
