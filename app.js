@@ -500,7 +500,7 @@ pool.query("select id, description from award_type;", function (err, dbres){
   route to return list of users
 */
 app.get('/users/list', isLoggedIn, function(req, res, next){
-pool.query("select id, firstname, lastname, email_address from user_profile;", function (err, dbres){
+pool.query("select id, firstname, lastname, email_address, admin_flag from user_profile;", function (err, dbres){
     if (err) {
       res.status(500);
       res.send("DB ERROR");

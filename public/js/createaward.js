@@ -71,7 +71,7 @@
               var response = JSON.parse(req.responseText);
                   
                   for (var i in response){ 
-                    if((response[i].email_address) && (response[i].email_address != "")){
+                    if((response[i].email_address) && (response[i].email_address != "") && (response[i].admin_flag != "Y")){
                     	var a = document.getElementById("areceiver"); 
                     	var b = document.createElement("option"); 
                     	var user_description_text = response[i].firstname + " " + response[i].lastname + " (" + response[i].email_address + ")";
